@@ -1,0 +1,56 @@
+version: '3.7'
+
+services:
+  ex_node:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: ex_node
+    image: ecoext
+    restart: always
+    ports:
+      - 8888:3000
+    volumes:
+      - ${ECOEXT_WEB_MAIN_VOLUME}:/app/
+    command:
+      nodemon -L index.js
+    environment:
+      ECOEXT_MARIADB_ROOTPASSWORD: ${ECOEXT_MARIADB_ROOTPASSWORD}
+      ECOEXT_MARIADB_USER: ${ECOEXT_MARIADB_USER}
+      ECOEXT_MARIADB_PORT: 3306
+      ECOEXT_MARIADB_HOST: 'ex_maria'
+    networks:
+      - eco_net
+    depends_on: 
+      - ex_maria
+
+  ex_maria:
+    build: 
+      context: .
+      dockerfile: ./docker/images/mariadb/Dockerfile
+    container_name: ex_maria
+    restart: always
+    volumes:
+      - ${ECOEXT_MARIADB_DUMP}:/docker-entrypoint-initdb.d
+      - ${ECOEXT_MARIADB_DATA}:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ECOEXT_MARIADB_ROOTPASSWORD}
+      MYSQL_DATABASE: ecoext
+    ports: 
+      - 3308:3306
+    networks:
+      - eco_net
+      
+  adminer:
+    container_name: ex_adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - eco_net
+    depends_on: 
+      - ex_maria
+
+networks:
+  eco_net:
