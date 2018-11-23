@@ -150,6 +150,39 @@ const Establishment = new GraphQLObjectType({
     }
 });
 
+const Transaction = new GraphQLObjectType({
+    name: 'Transaction',
+    description: 'This represents an Transaction',
+    fields: () => {
+        return {
+            transaction_id: {
+                type: GraphQLInt,
+                resolve(transaction) {
+                    return transaction.transaction_id
+                }
+            },
+            date: {
+                type: GraphQLString,
+                resolve(transaction) {
+                    return transaction.date
+                }
+            },
+            label: {
+                type: GraphQLString,
+                resolve(transaction) {
+                    return transaction.label
+                }
+            },
+            description: {
+                type: GraphQLString,
+                resolve(transaction) {
+                    return transaction.description
+                }
+            },
+        }
+    }
+});
+
 const Query = new GraphQLObjectType({
     name: 'Query',
     description: 'This is a root query',
@@ -194,7 +227,16 @@ const Query = new GraphQLObjectType({
                         where: args
                     });
                 }
-            }
+            },
+            transaction: {
+                type: new GraphQLList(Transaction),
+                resolve(root, args) {
+                    // console.log(Db.models.transaction);
+                    return Db.models.transaction.findAll({
+                        where: args
+                    });
+                }
+            },
         }
     }
 })
