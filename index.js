@@ -8,7 +8,7 @@ const graphiql = require( 'graphiql');
 const APP_PORT = 3000;
 const app = Express();
 
-app.use('/graphql', GraphHTTP({
+app.use('/', GraphHTTP({
     schema: Schema,
     pretty: true,
     graphiql: true
