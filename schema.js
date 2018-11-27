@@ -116,12 +116,6 @@ const Establishment = new GraphQLObjectType({
                     return establishment.establishment_id
                 }
             },
-            purse_id: {
-                type: GraphQLInt,
-                resolve(establishment) {
-                    return establishment.purse_id
-                }
-            },
             name: {
                 type: GraphQLString,
                 resolve(establishment) {
@@ -201,10 +195,10 @@ const Query = new GraphQLObjectType({
                     });
                 }
             },
-            purses: {
+            purse: {
                 type: new GraphQLList(Purse),
                 resolve(root, args) {
-                    console.log(Db.models.account_purses);
+                    // console.log(Db.models.account_purses);
                     return Db.models.purse.findAll({
                         where: args
                     });
@@ -213,17 +207,8 @@ const Query = new GraphQLObjectType({
             establishment: {
                 type: new GraphQLList(Establishment),
                 resolve(root, args) {
-                    console.log(Db.models.establishment);
+                    // console.log(Db.models.establishment);
                     return Db.models.establishment.findAll({
-                        where: args
-                    });
-                }
-            },
-            purses: {
-                type: new GraphQLList(Establishment),
-                resolve(root, args) {
-                    console.log(Db.models.account_purses);
-                    return Db.models.purse.findAll({
                         where: args
                     });
                 }
