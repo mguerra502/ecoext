@@ -92,6 +92,39 @@ const Establishment = new GraphQLObjectType({
     }
 });
 
+const Notification = new GraphQLObjectType({
+    name: 'Notification',
+    description: 'This represents an Notification',
+    fields: () => {
+        return {
+            notification_id: {
+                type: GraphQLInt,
+                resolve(notification) {
+                    return notification.notification_id
+                }
+            },
+            name: {
+                type: GraphQLString,
+                resolve(notification) {
+                    return notification.name
+                }
+            },
+            type: {
+                type: GraphQLString,
+                resolve(notification) {
+                    return notification.type
+                }
+            },
+            description: {
+                type: GraphQLString,
+                resolve(notification) {
+                    return notification.description
+                }
+            },
+        }
+    }
+});
+
 const Transaction = new GraphQLObjectType({
     name: 'Transaction',
     description: 'This represents an Transaction',
@@ -143,14 +176,6 @@ const Query = new GraphQLObjectType({
                     });
                 }
             },
-            account_notification: {
-                type: new GraphQLList(AccountNotification),
-                resolve(root, args) {
-                    return Db.models.account_notification.findAll({
-                        where: args
-                    });
-                }
-            },
             purse: {
                 type: new GraphQLList(Purse),
                 args: {
@@ -179,6 +204,15 @@ const Query = new GraphQLObjectType({
                 resolve(root, args) {
                     // console.log(Db.models.transaction);
                     return Db.models.transaction.findAll({
+                        where: args
+                    });
+                }
+            },
+            notification: {
+                type: new GraphQLList(Notification),
+                resolve(root, args) {
+                    // console.log(Db.models.notification);
+                    return Db.models.notification.findAll({
                         where: args
                     });
                 }

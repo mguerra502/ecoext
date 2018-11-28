@@ -17,6 +17,7 @@ const AccountPurses         = Conn.import(__dirname + "/db/schema/AccountPurses"
 const AccountNotification   = Conn.import(__dirname + "/db/schema/AccountNotification")
 const Establishment         = Conn.import(__dirname + "/db/schema/Establishment")
 const Transaction           = Conn.import(__dirname + "/db/schema/Transaction")
+const Notification          = Conn.import(__dirname + "/db/schema/Notification")
 
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
