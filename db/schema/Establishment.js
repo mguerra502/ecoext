@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        lasaddresstName: {
+        address: {
             type: DataTypes.TEXT,
             allowNull: false
         },

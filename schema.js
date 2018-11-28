@@ -197,6 +197,11 @@ const Query = new GraphQLObjectType({
             },
             purse: {
                 type: new GraphQLList(Purse),
+                args: {
+                    purse_id: {
+                        type: GraphQLInt
+                    }
+                },
                 resolve(root, args) {
                     // console.log(Db.models.account_purses);
                     return Db.models.purse.findAll({
