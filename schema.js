@@ -11,47 +11,47 @@ const {
 // import Db from './db'
 const Db = require('./db');
 
-const AccountPurse = new GraphQLObjectType({
-    name: 'AccountPurse',
-    description: 'This represents an AccountPurse',
-    fields: () => {
-        return {
-            account_id: {
-                type: GraphQLInt,
-                resolve(account_purse) {
-                    return account_purse.account_id
-                }
-            },
-            purse_id: {
-                type: GraphQLInt,
-                resolve(account_purse) {
-                    return account_purse.purse_id
-                }
-            }
-        }
-    }
-});
+// const AccountPurse = new GraphQLObjectType({
+//     name: 'AccountPurse',
+//     description: 'This represents an AccountPurse',
+//     fields: () => {
+//         return {
+//             account_id: {
+//                 type: GraphQLInt,
+//                 resolve(account_purse) {
+//                     return account_purse.account_id
+//                 }
+//             },
+//             purse_id: {
+//                 type: GraphQLInt,
+//                 resolve(account_purse) {
+//                     return account_purse.purse_id
+//                 }
+//             }
+//         }
+//     }
+// });
 
-const AccountNotification = new GraphQLObjectType({
-    name: 'AccountNotification',
-    description: 'This represents an AccountNotification',
-    fields: () => {
-        return {
-            account_id: {
-                type: GraphQLInt,
-                resolve(account_notification) {
-                    return account_notification.account_id
-                }
-            },
-            notification_id: {
-                type: GraphQLInt,
-                resolve(account_notification) {
-                    return account_notification.notification_id
-                }
-            }
-        }
-    }
-});
+// const AccountNotification = new GraphQLObjectType({
+//     name: 'AccountNotification',
+//     description: 'This represents an AccountNotification',
+//     fields: () => {
+//         return {
+//             account_id: {
+//                 type: GraphQLInt,
+//                 resolve(account_notification) {
+//                     return account_notification.account_id
+//                 }
+//             },
+//             notification_id: {
+//                 type: GraphQLInt,
+//                 resolve(account_notification) {
+//                     return account_notification.notification_id
+//                 }
+//             }
+//         }
+//     }
+// });
 
 const Establishment = new GraphQLObjectType({
     name: 'Establishment',
@@ -257,6 +257,13 @@ const Account = new GraphQLObjectType({
                 resolve(account) {
                     console.log(account)
                     return account.getPurses();
+                }
+            },
+            notification: {
+                type: new GraphQLList(Notification),
+                resolve(account) {
+                    console.log(account)
+                    return account.getNotifications();
                 }
             }
         }
