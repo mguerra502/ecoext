@@ -11,79 +11,6 @@ const {
 // import Db from './db'
 const Db = require('./db');
 
-// const Person = new GraphQLObjectType({
-//     name: 'Person',
-//     description: 'This represents a Person',
-//     fields: () => {
-//         return {
-//             id: {
-//                 type: GraphQLInt,
-//                 resolve(person){
-//                     return person.id
-//                 }
-//             },
-//             firstName: {
-//                 type: GraphQLString,
-//                 resolve(person) {
-//                     return person.firstName
-//                 }
-//             },
-//             lastName: {
-//                 type: GraphQLString,
-//                 resolve(person) {
-//                     return person.lastName
-//                 }
-//             },
-//             email: {
-//                 type: GraphQLString,
-//                 resolve(person) {
-//                     return person.email
-//                 }
-//             },
-//             posts:{
-//                 type: new GraphQLList(Post),
-//                 resolve(person){
-//                     return person.getPosts();
-//                 }
-//             }
-//         }
-//     }
-// })
-
-// const Post = new GraphQLObjectType({
-//     name: 'Post',
-//     description: 'This represents a Post',
-//     fields: () => {
-//         return {
-//             id: {
-//                 type: GraphQLInt,
-//                 resolve(post) {
-//                     return post.id
-//                 }
-//             },
-//             title: {
-//                 type: GraphQLString,
-//                 resolve(post) {
-//                     return post.title
-//                 }
-//             },
-//             content: {
-//                 type: GraphQLString,
-//                 resolve(post) {
-//                     return post.content
-//                 }
-//             }
-//             ,
-//             person: {
-//                 type: Person,
-//                 resolve(post) {
-//                     return post.getPerson();
-//                 }
-//             }
-//         }
-//     }
-// });
-
 const AccountPurse = new GraphQLObjectType({
     name: 'AccountPurse',
     description: 'This represents an AccountPurse',
@@ -99,6 +26,27 @@ const AccountPurse = new GraphQLObjectType({
                 type: GraphQLInt,
                 resolve(account_purse) {
                     return account_purse.purse_id
+                }
+            }
+        }
+    }
+});
+
+const AccountNotification = new GraphQLObjectType({
+    name: 'AccountNotification',
+    description: 'This represents an AccountNotification',
+    fields: () => {
+        return {
+            account_id: {
+                type: GraphQLInt,
+                resolve(account_notification) {
+                    return account_notification.account_id
+                }
+            },
+            notification_id: {
+                type: GraphQLInt,
+                resolve(account_notification) {
+                    return account_notification.notification_id
                 }
             }
         }
@@ -191,6 +139,14 @@ const Query = new GraphQLObjectType({
                 },
                 resolve(root, args) {
                     return Db.models.account.findAll({
+                        where: args
+                    });
+                }
+            },
+            account_notification: {
+                type: new GraphQLList(AccountNotification),
+                resolve(root, args) {
+                    return Db.models.account_notification.findAll({
                         where: args
                     });
                 }

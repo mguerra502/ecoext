@@ -11,11 +11,12 @@ const Conn = new Sequelize(
   }
 );
     
-const Purse             = Conn.import(__dirname + "/db/schema/Purse")
-const Account           = Conn.import(__dirname + "/db/schema/Account")
-const AccountPurses     = Conn.import(__dirname + "/db/schema/AccountPurses")
-const Establishment     = Conn.import(__dirname + "/db/schema/Establishment")
-const Transaction       = Conn.import(__dirname + "/db/schema/Transaction")
+const Purse                 = Conn.import(__dirname + "/db/schema/Purse")
+const Account               = Conn.import(__dirname + "/db/schema/Account")
+const AccountPurses         = Conn.import(__dirname + "/db/schema/AccountPurses")
+const AccountNotification   = Conn.import(__dirname + "/db/schema/AccountNotification")
+const Establishment         = Conn.import(__dirname + "/db/schema/Establishment")
+const Transaction           = Conn.import(__dirname + "/db/schema/Transaction")
 
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
