@@ -63,5 +63,5 @@ data/
 docker/data/
 
 package-lock.json
-db/data/
-db/dump/
+db/mysql/
+db/maria/

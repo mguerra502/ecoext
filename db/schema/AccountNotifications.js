@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('account_notification', {
+    return sequelize.define('account_notifications', {
 
         account_id: {
             type: DataTypes.INTEGER,
