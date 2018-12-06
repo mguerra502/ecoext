@@ -15,14 +15,15 @@ services:
     command:
       nodemon -L index.js
     environment:
-      ECOEXT_MARIADB_ROOTPASSWORD: ${ECOEXT_MARIADB_ROOTPASSWORD}
-      ECOEXT_MARIADB_USER: ${ECOEXT_MARIADB_USER}
-      ECOEXT_MARIADB_PORT: 3306
-      ECOEXT_MARIADB_HOST: 'ex_maria'
+      ECOEXT_DATABASE_ROOTPASSWORD: ${ECOEXT_DATABASE_ROOTPASSWORD}
+      ECOEXT_DATABASE_USER: ${ECOEXT_DATABASE_USER}
+      ECOEXT_DATABASE: ${ECOEXT_DATABASE}
+      ECOEXT_MARIADB_HOST: ${ECOEXT_MARIADB_HOST}
+      ECOEXT_MYSQL_HOST: ${ECOEXT_MYSQL_HOST}
     networks:
       - eco_net
     depends_on: 
-      - ex_maria
+      # - ex_maria
       - ex_mysql
   ex_mysql:
     image: mysql
@@ -33,29 +34,29 @@ services:
       - ${ECOEXT_MYSQL_DATA}:/var/lib/mysql
     container_name: ex_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${ECOEXT_MARIADB_ROOTPASSWORD}
+      MYSQL_ROOT_PASSWORD: ${ECOEXT_DATABASE_ROOTPASSWORD}
       MYSQL_DATABASE: ecoext
     ports: 
       - 3305:3306
     networks:
       - eco_net
 
-  ex_maria:
-    build: 
-      context: .
-      dockerfile: ./docker/images/mariadb/Dockerfile
-    container_name: ex_maria
-    restart: always
-    volumes:
-      - ${ECOEXT_MARIADB_DUMP}:/docker-entrypoint-initdb.d
-      - ${ECOEXT_MARIADB_DATA}:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${ECOEXT_MARIADB_ROOTPASSWORD}
-      MYSQL_DATABASE: ecoext
-    ports: 
-      - 3308:3306
-    networks:
-      - eco_net
+  # ex_maria:
+  #   build: 
+  #     context: .
+  #     dockerfile: ./docker/images/mariadb/Dockerfile
+  #   container_name: ex_maria
+  #   restart: always
+  #   volumes:
+  #     - ${ECOEXT_MARIADB_DUMP}:/docker-entrypoint-initdb.d
+  #     - ${ECOEXT_MARIADB_DATA}:/var/lib/mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${ECOEXT_DATABASE_ROOTPASSWORD}
+  #     MYSQL_DATABASE: ecoext
+  #   ports: 
+  #     - 3308:3306
+  #   networks:
+  #     - eco_net
       
   adminer:
     container_name: ex_adminer
@@ -66,7 +67,8 @@ services:
     networks:
       - eco_net
     depends_on: 
-      - ex_maria
+      # - ex_maria
+      - ex_mysql
 
 networks:
   eco_net:

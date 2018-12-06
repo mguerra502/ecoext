@@ -16,8 +16,5 @@ app.use('/', GraphHTTP({
 
 app.listen(APP_PORT, () => {
     console.log(process.env);
-    console.log(process.env.ECOEXT_MARIADB_USER);
-    console.log(process.env.ECOEXT_MARIADB_ROOTPASSWORD);
-    console.log(process.env.ECOEXT_MARIADB_PORT);
     console.log(`App listerning on port ${APP_PORT}`)
 })

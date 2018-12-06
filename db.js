@@ -2,10 +2,10 @@ const { Sequelize } = require('sequelize');
 
 const Conn = new Sequelize(
   {
-    host: "ex_maria",
-    database: 'ecoext',
-    username: 'root',
-    password: process.env.ECOEXT_MARIADB_ROOTPASSWORD,
+    host: process.env.ECOEXT_MYSQL_HOST,
+    database: process.env.ECOEXT_DATABASE,
+    username: process.env.ECOEXT_DATABASE_USER,
+    password: process.env.ECOEXT_DATABASE_ROOTPASSWORD,
     dialect: 'mysql',
     port: 3306
   }
