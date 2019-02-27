@@ -64,4 +64,4 @@ docker/data/
 
 package-lock.json
 db/mysql/
-db/maria/
+db/mariadb/
