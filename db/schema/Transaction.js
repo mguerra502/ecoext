@@ -1,22 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('establishment', {
-        establishment_id: {
+    return sequelize.define('transaction', {
+        transaction_id: {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
-        name: {
+        label: {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        address: {
+        date: {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        lat: {
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
-        lon: {
+        description: {
             type: DataTypes.TEXT,
             allowNull: false
         },

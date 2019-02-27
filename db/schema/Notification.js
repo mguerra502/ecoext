@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('establishment', {
-        establishment_id: {
+    return sequelize.define('notification', {
+        notification_id: {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
@@ -8,15 +8,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        address: {
+        type: {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        lat: {
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
-        lon: {
+        description: {
             type: DataTypes.TEXT,
             allowNull: false
         },
