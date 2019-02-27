@@ -5,7 +5,8 @@ const {
     GraphQLInt,
     GraphQLSchema,
     GraphQLList,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLFloat
 } = require('graphql');
 
 // import Db from './db'
@@ -133,7 +134,7 @@ const Transaction = new GraphQLObjectType({
             transaction_id: {
                 type: GraphQLInt,
                 resolve(transaction) {
-                    return transaction.transaction_id
+                    return transaction.transaction_id;
                 }
             },
             date: {
@@ -154,6 +155,51 @@ const Transaction = new GraphQLObjectType({
                     return transaction.description
                 }
             },
+            transaction_items: {
+                type: new GraphQLList(TransactionItems),
+                resolve(transaction_items) {
+                    return transaction_items.getTransactionItems();
+                }
+            }
+        }
+    }
+});
+
+const TransactionItems = new GraphQLObjectType({
+    name: 'TransactionItems',
+    description: 'This represents an Transaction Items',
+    fields: () => {
+        return {
+            transaction_id: {
+                type: GraphQLInt,
+                resolve(transaction_items) {
+                    return transaction_items.transaction_id;
+                }
+            },
+            product: {
+                type: GraphQLString,
+                resolve(transaction_items) {
+                    return transaction_items.product;
+                }
+            },
+            price: {
+                type: GraphQLFloat,
+                resolve(transaction_items) {
+                    return transaction_items.price;
+                }
+            },
+            quantity: {
+                type: GraphQLInt,
+                resolve(transaction_items) {
+                    return transaction_items.quantity;
+                }
+            },
+            tax: {
+                type: GraphQLFloat,
+                resolve(transaction_items) {
+                    return transaction_items.tax;
+                }
+            }
         }
     }
 });
@@ -171,6 +217,7 @@ const Query = new GraphQLObjectType({
                     }
                 },
                 resolve(root, args) {
+                    let a_args = args
                     return Db.models.account.findAll({
                         where: args
                     });
@@ -201,6 +248,11 @@ const Query = new GraphQLObjectType({
             },
             transaction: {
                 type: new GraphQLList(Transaction),
+                args: {
+                    transaction_id: {
+                        type: GraphQLInt
+                    }
+                },
                 resolve(root, args) {
                     // console.log(Db.models.transaction);
                     return Db.models.transaction.findAll({
@@ -213,6 +265,20 @@ const Query = new GraphQLObjectType({
                 resolve(root, args) {
                     // console.log(Db.models.notification);
                     return Db.models.notification.findAll({
+                        where: args
+                    });
+                }
+            },
+            transaction_items: {
+                type: new GraphQLList(TransactionItems),
+                args: {
+                    // transaction_id: {
+                    //     type: GraphQLInt
+                    // }
+                },
+                resolve(root, args) {
+                    // console.log(Db.models.transaction);
+                    return Db.models.transaction_items.findAll({
                         where: args
                     });
                 }

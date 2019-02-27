@@ -33,12 +33,6 @@ const Conn = new Sequelize(
   }
 );
 
-console.log(`ECOEXT_DATABASE ${ECOEXT_DATABASE}`)
-console.log(`ECOEXT_DATABASE_USER ${ECOEXT_DATABASE_USER}`)
-console.log(`ECOEXT_DATABASE_ROOTPASSWORD ${ECOEXT_DATABASE_ROOTPASSWORD}`)
-console.log(`ECOEXT_MYSQL_HOST ${ECOEXT_MYSQL_HOST}`)
-console.log(`ECOEXT_MYSQL_PORT ${ECOEXT_MYSQL_PORT}`)
-    
 const Purse                 = Conn.import(__dirname + "/db/schema/Purse")
 const Account               = Conn.import(__dirname + "/db/schema/Account")
 const AccountPurses         = Conn.import(__dirname + "/db/schema/AccountPurses")
@@ -48,12 +42,16 @@ const AccountNotifications   = Conn.import(__dirname + "/db/schema/AccountNotifi
 const Establishment         = Conn.import(__dirname + "/db/schema/Establishment")
 
 const Transaction           = Conn.import(__dirname + "/db/schema/Transaction")
+const TransactionItems      = Conn.import(__dirname + "/db/schema/TransactionItems")
 const Notification          = Conn.import(__dirname + "/db/schema/Notification")
 
 // Notification.belongsToMany
 
 Account.belongsToMany(Notification, {through: AccountNotifications, foreignKey: 'account_id'});
 Notification.belongsToMany(Account, {through: AccountNotifications, foreignKey: 'notification_id'});
+
+TransactionItems.belongsTo(Transaction, {foreignKey: 'transaction_id'});
+// User.belongsTo(Company, {foreignKey: 'fk_company'}); // Adds fk_company to User
 
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
