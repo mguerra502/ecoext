@@ -11,17 +11,8 @@ services:
       - 8888:3000
     volumes:
       - ${ECOEXT_WEB_MAIN_VOLUME}:/app/
-      # - d:/repos/ecoext/ecoext/data:/data/
     command:
-      # nodemon index.js
       nodemon -L index.js
-      # ls
-    # environment:
-    #   ECOEXT_DATABASE_ROOTPASSWORD: ${ECOEXT_DATABASE_ROOTPASSWORD}
-    #   ECOEXT_DATABASE_USER: ${ECOEXT_DATABASE_USER}
-    #   ECOEXT_DATABASE: ${ECOEXT_DATABASE}
-    #   ECOEXT_MARIADB_HOST: ${ECOEXT_MARIADB_HOST}
-    #   ECOEXT_MYSQL_HOST: ${ECOEXT_MYSQL_HOST}
     networks:
       - eco_net
     depends_on: 
