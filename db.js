@@ -33,26 +33,30 @@ const Conn = new Sequelize(
   }
 );
 
-const Purse                 = Conn.import(__dirname + "/db/schema/Purse")
-const Account               = Conn.import(__dirname + "/db/schema/Account")
-const AccountPurses         = Conn.import(__dirname + "/db/schema/AccountPurses")
+const Purse                         = Conn.import(__dirname + "/db/schema/Purse")
+const Account                       = Conn.import(__dirname + "/db/schema/Account")
+const AccountPurses                 = Conn.import(__dirname + "/db/schema/AccountPurses")
 
-const AccountNotifications   = Conn.import(__dirname + "/db/schema/AccountNotifications")
+const AccountNotifications          = Conn.import(__dirname + "/db/schema/AccountNotifications")
 
-const Establishment         = Conn.import(__dirname + "/db/schema/Establishment")
+const Establishment                 = Conn.import(__dirname + "/db/schema/Establishment")
 
-const Transaction           = Conn.import(__dirname + "/db/schema/Transaction")
-const TransactionItems      = Conn.import(__dirname + "/db/schema/TransactionItems")
-const Notification          = Conn.import(__dirname + "/db/schema/Notification")
+const Transaction                   = Conn.import(__dirname + "/db/schema/Transaction")
+const TransactionItems              = Conn.import(__dirname + "/db/schema/TransactionItems")
 
-// Notification.belongsToMany
+// 
+const TransactionNotifications      = Conn.import(__dirname + "/db/schema/TransactionNotifications")
+// 
+
+const Notification                  = Conn.import(__dirname + "/db/schema/Notification")
 
 Account.belongsToMany(Notification, {through: AccountNotifications, foreignKey: 'account_id'});
 Notification.belongsToMany(Account, {through: AccountNotifications, foreignKey: 'notification_id'});
 
-TransactionItems.belongsTo(Transaction, {foreignKey: 'transaction_id'});
-// User.belongsTo(Company, {foreignKey: 'fk_company'}); // Adds fk_company to User
+Transaction.belongsToMany(Notification, {through: TransactionNotifications, foreignKey: 'transaction_id'});
+Notification.belongsToMany(Transaction, {through: TransactionNotifications, foreignKey: 'notification_id'});
 
+TransactionItems.belongsTo(Transaction, {foreignKey: 'transaction_id'});
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
 

@@ -157,8 +157,22 @@ const Transaction = new GraphQLObjectType({
             },
             transaction_items: {
                 type: new GraphQLList(TransactionItems),
-                resolve(transaction_items) {
-                    return transaction_items.getTransactionItems();
+                resolve(transaction) {
+                    console.log(transaction);
+                    return transaction.getTransactionItems();
+                }
+            },
+            // transaction_notifications: {
+            //     type: new GraphQLList(TransactionNotifications),
+            //     resolve(transaction_notifications) {
+            //         return transaction_notifications.getTransactionNotifications();
+            //     }
+            // },
+            notification: {
+                type: new GraphQLList(Notification),
+                resolve(transaction) {
+                    console.log(transaction)
+                    return transaction.getNotifications();
                 }
             }
         }
@@ -203,6 +217,31 @@ const TransactionItems = new GraphQLObjectType({
         }
     }
 });
+
+/**
+ * 
+ */
+const TransactionNotifications = new GraphQLObjectType({
+    name: 'TransactionNotifications',
+    description: 'This represents an Transaction Notifications',
+    fields: () => {
+        return {
+            transaction_id: {
+                type: GraphQLInt,
+                resolve(transaction_notifications) {
+                    return transaction_notifications.transaction_id;
+                }
+            },
+            notification_id: {
+                type: GraphQLString,
+                resolve(transaction_notifications) {
+                    return transaction_notifications.notification_id;
+                }
+            },
+        }
+    }
+});
+/**/
 
 const Query = new GraphQLObjectType({
     name: 'Query',
@@ -283,6 +322,13 @@ const Query = new GraphQLObjectType({
                     });
                 }
             },
+            // transaction_notifications: {
+            //     type: new GraphQLList(TransactionNotifications),
+            //     resolve(root, args) {
+            //         // console.log(Db.models.transaction);
+            //         return Db.models.transaction_notifications.findAll();
+            //     }
+            // },
         }
     }
 })

@@ -84,6 +84,6 @@ app.use('/api', GraphHTTP(req => ({
 })))
 
 app.listen(APP_PORT, () => {
-    // console.log(process.env);
+    console.log(process.env);
     console.log(`App listerning on port ${APP_PORT}`)
 })
