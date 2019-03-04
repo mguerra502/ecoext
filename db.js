@@ -56,7 +56,8 @@ Notification.belongsToMany(Account, {through: AccountNotifications, foreignKey: 
 Transaction.belongsToMany(Notification, {through: TransactionNotifications, foreignKey: 'transaction_id'});
 Notification.belongsToMany(Transaction, {through: TransactionNotifications, foreignKey: 'notification_id'});
 
-TransactionItems.belongsTo(Transaction, {foreignKey: 'transaction_id'});
+Transaction.hasMany(TransactionItems, {as: 'TransactionItems', foreignKey: 'transaction_id'});
+
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
 

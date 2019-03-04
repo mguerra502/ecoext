@@ -155,24 +155,19 @@ const Transaction = new GraphQLObjectType({
                     return transaction.description
                 }
             },
-            transaction_items: {
-                type: new GraphQLList(TransactionItems),
-                resolve(transaction) {
-                    console.log(transaction);
-                    return transaction.getTransactionItems();
-                }
-            },
-            // transaction_notifications: {
-            //     type: new GraphQLList(TransactionNotifications),
-            //     resolve(transaction_notifications) {
-            //         return transaction_notifications.getTransactionNotifications();
-            //     }
-            // },
             notification: {
                 type: new GraphQLList(Notification),
                 resolve(transaction) {
                     console.log(transaction)
                     return transaction.getNotifications();
+                }
+            },
+            items: {
+                type: new GraphQLList(TransactionItems),
+                resolve(transaction) {
+                    console.log(transaction)
+                    // return transaction.getWorkers();
+                    return transaction.getTransactionItems();
                 }
             }
         }
@@ -367,14 +362,12 @@ const Account = new GraphQLObjectType({
             purse: {
                 type: new GraphQLList(Purse),
                 resolve(account) {
-                    console.log(account)
                     return account.getPurses();
                 }
             },
             notification: {
                 type: new GraphQLList(Notification),
                 resolve(account) {
-                    console.log(account)
                     return account.getNotifications();
                 }
             }
