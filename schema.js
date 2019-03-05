@@ -370,7 +370,13 @@ const Account = new GraphQLObjectType({
                 resolve(account) {
                     return account.getNotifications();
                 }
-            }
+            },
+            transaction: {
+                type: new GraphQLList(Transaction),
+                resolve(account) {
+                    return account.getTransactions();
+                }
+            },
         }
     }
 })

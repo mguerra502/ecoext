@@ -1,12 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('transaction_notifications', {
-        notification_id: {
+    return sequelize.define('account_transactions', {
+
+        account_id: {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
         transaction_id: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            primaryKey: true
         },
         createdAt: {
             field: 'created_at',

@@ -38,6 +38,7 @@ const Account                       = Conn.import(__dirname + "/db/schema/Accoun
 const AccountPurses                 = Conn.import(__dirname + "/db/schema/AccountPurses")
 
 const AccountNotifications          = Conn.import(__dirname + "/db/schema/AccountNotifications")
+const AccountTransactions          = Conn.import(__dirname + "/db/schema/AccountTransactions")
 
 const Establishment                 = Conn.import(__dirname + "/db/schema/Establishment")
 
@@ -60,5 +61,9 @@ Transaction.hasMany(TransactionItems, {as: 'TransactionItems', foreignKey: 'tran
 
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
+
+//Account transaction
+Account.belongsToMany(Transaction, {through: AccountTransactions, foreignKey: 'account_id'});
+Transaction.belongsToMany(Account, {through: AccountTransactions, foreignKey: 'transaction_id'});
 
 module.exports = Conn;
