@@ -49,6 +49,10 @@ const TransactionItems              = Conn.import(__dirname + "/db/schema/Transa
 const TransactionNotifications      = Conn.import(__dirname + "/db/schema/TransactionNotifications")
 // 
 
+// 
+const PurseTransactions             = Conn.import(__dirname + "/db/schema/PurseTransaction")
+// 
+
 const Notification                  = Conn.import(__dirname + "/db/schema/Notification")
 
 Account.belongsToMany(Notification, {through: AccountNotifications, foreignKey: 'account_id'});
@@ -63,7 +67,11 @@ Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'})
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
 
 //Account transaction
-Account.belongsToMany(Transaction, {through: AccountTransactions, foreignKey: 'account_id'});
-Transaction.belongsToMany(Account, {through: AccountTransactions, foreignKey: 'transaction_id'});
+// Account.belongsToMany(Transaction, {through: AccountTransactions, foreignKey: 'account_id'});
+// Transaction.belongsToMany(Account, {through: AccountTransactions, foreignKey: 'transaction_id'});
+
+//Account transaction
+Purse.belongsToMany(Transaction, {through: PurseTransactions, foreignKey: 'purse_id'});
+Transaction.belongsToMany(Purse, {through: PurseTransactions, foreignKey: 'transaction_id'});
 
 module.exports = Conn;

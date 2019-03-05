@@ -371,12 +371,12 @@ const Account = new GraphQLObjectType({
                     return account.getNotifications();
                 }
             },
-            transaction: {
-                type: new GraphQLList(Transaction),
-                resolve(account) {
-                    return account.getTransactions();
-                }
-            },
+            // transaction: {
+            //     type: new GraphQLList(Transaction),
+            //     resolve(account) {
+            //         return account.getTransactions();
+            //     }
+            // },
         }
     }
 })
@@ -409,7 +409,13 @@ const Purse = new GraphQLObjectType({
                 resolve(purse) {
                     return purse.getAccounts();
                 }
-            }
+            },
+            transaction: {
+                type: new GraphQLList(Transaction),
+                resolve(purse) {
+                    return purse.getTransactions();
+                }
+            },
         }
     }
 });
