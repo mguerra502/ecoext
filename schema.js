@@ -1,4 +1,5 @@
 const graphql = require('graphql');
+
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -9,8 +10,12 @@ const {
     GraphQLFloat
 } = require('graphql');
 
+
+
 // import Db from './db'
 const Db = require('./db');
+
+// const PhoneNumber = Db.import(__dirname + "/db/schema/PhoneNumber")
 
 // const AccountPurse = new GraphQLObjectType({
 //     name: 'AccountPurse',
@@ -450,9 +455,49 @@ const Purse = new GraphQLObjectType({
 //     }
 // })
 
+const PhoneNumber = new GraphQLObjectType({
+    name: 'PhoneNumber',
+    description: 'This represents a PhoneNumber',
+    fields: () => {
+        return {
+            phone_number_id: {
+                type: GraphQLInt,
+                resolve(phpneNumber) {
+                    return phpneNumber.phone_number_id;
+                }
+            },
+            number: {
+                type: GraphQLString,
+                    resolve(phpneNumber) {
+                        return phpneNumber.number;
+                    }
+            },
+        };
+    }
+});
+
+const Mutation = new GraphQLObjectType({
+    name: 'Mutations',
+    description: 'Functions to set stuff',
+    fields:{
+        addPhoneNumber: {
+            type: PhoneNumber,
+            args: {
+                number: {
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+            },
+            resolve(source, args) {
+                return Db.models.phone_number.create({
+                    number: args.number,
+                });
+            }
+        }
+    }
+});
 const Schema = new GraphQLSchema({
     query: Query,
-    // mutation: Mutation
+    mutation: Mutation
 })
 
 // export default Schema;
