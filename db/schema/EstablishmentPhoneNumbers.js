@@ -1,12 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('establishment_phone_number', {
+    return sequelize.define('establishment_phone_numbers', {
         establishment_id: {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
         phone_number_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         createdAt: {
             field: 'created_at',
