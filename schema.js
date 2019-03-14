@@ -1,4 +1,5 @@
 const graphql = require('graphql');
+
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -9,50 +10,8 @@ const {
     GraphQLFloat
 } = require('graphql');
 
-// import Db from './db'
 const Db = require('./db');
 
-// const AccountPurse = new GraphQLObjectType({
-//     name: 'AccountPurse',
-//     description: 'This represents an AccountPurse',
-//     fields: () => {
-//         return {
-//             account_id: {
-//                 type: GraphQLInt,
-//                 resolve(account_purse) {
-//                     return account_purse.account_id
-//                 }
-//             },
-//             purse_id: {
-//                 type: GraphQLInt,
-//                 resolve(account_purse) {
-//                     return account_purse.purse_id
-//                 }
-//             }
-//         }
-//     }
-// });
-
-// const AccountNotification = new GraphQLObjectType({
-//     name: 'AccountNotification',
-//     description: 'This represents an AccountNotification',
-//     fields: () => {
-//         return {
-//             account_id: {
-//                 type: GraphQLInt,
-//                 resolve(account_notification) {
-//                     return account_notification.account_id
-//                 }
-//             },
-//             notification_id: {
-//                 type: GraphQLInt,
-//                 resolve(account_notification) {
-//                     return account_notification.notification_id
-//                 }
-//             }
-//         }
-//     }
-// });
 
 const Establishment = new GraphQLObjectType({
     name: 'Establishment',
@@ -62,34 +21,52 @@ const Establishment = new GraphQLObjectType({
             establishment_id: {
                 type: GraphQLInt,
                 resolve(establishment) {
-                    return establishment.establishment_id
+                    return establishment.establishment_id;
                 }
             },
             name: {
                 type: GraphQLString,
                 resolve(establishment) {
-                    return establishment.name
+                    return establishment.name;
                 }
             },
             address: {
                 type: GraphQLString,
                 resolve(establishment) {
-                    return establishment.address
+                    return establishment.address;
                 }
             },
             lat: {
                 type: GraphQLString,
                 resolve(establishment) {
-                    return establishment.lat
+                    return establishment.lat;
                 }
             },
             lon: {
                 type: GraphQLString,
                 resolve(establishment) {
-                    return establishment.lon
+                    return establishment.lon;
                 }
             },
-        }
+            // phonenumber: {
+            //     type: new GraphQLList(PhoneNumber),
+            //     resolve(establishment) {
+            //         return establishment.getPhoneNumbers();
+            //     }
+            // },
+            notifications: {
+                type: new GraphQLList(Notification),
+                resolve(establishment) {
+                    return establishment.getNotifications();
+                }
+            },
+            transaction: {
+                type: new GraphQLList(Transaction),
+                resolve(establishment) {
+                    return establishment.getTransactions();
+                }
+            },
+        };
     }
 });
 
@@ -101,28 +78,28 @@ const Notification = new GraphQLObjectType({
             notification_id: {
                 type: GraphQLInt,
                 resolve(notification) {
-                    return notification.notification_id
+                    return notification.notification_id;
                 }
             },
             name: {
                 type: GraphQLString,
                 resolve(notification) {
-                    return notification.name
+                    return notification.name;
                 }
             },
             type: {
                 type: GraphQLString,
                 resolve(notification) {
-                    return notification.type
+                    return notification.type;
                 }
             },
             description: {
                 type: GraphQLString,
                 resolve(notification) {
-                    return notification.description
+                    return notification.description;
                 }
             },
-        }
+        };
     }
 });
 
@@ -140,43 +117,67 @@ const Transaction = new GraphQLObjectType({
             date: {
                 type: GraphQLString,
                 resolve(transaction) {
-                    return transaction.date
+                    return transaction.date;
                 }
             },
             label: {
                 type: GraphQLString,
                 resolve(transaction) {
-                    return transaction.label
+                    return transaction.label;
                 }
             },
             description: {
                 type: GraphQLString,
                 resolve(transaction) {
-                    return transaction.description
+                    return transaction.description;
                 }
             },
             notification: {
                 type: new GraphQLList(Notification),
                 resolve(transaction) {
-                    console.log(transaction)
                     return transaction.getNotifications();
                 }
             },
             items: {
                 type: new GraphQLList(TransactionItems),
                 resolve(transaction) {
-                    console.log(transaction)
-                    // return transaction.getWorkers();
                     return transaction.getTransactionItems();
                 }
+            },
+            payment: {
+                type: new GraphQLList(TransactionPayments),
+                resolve(transaction) {
+                    return transaction.getTransactionPayments();
+                }
+            },
+        };
+    }
+});
+
+const PaymentType = new GraphQLObjectType({
+    name: 'PaymentType',
+    description: 'This represents an Payment Type',
+    fields: () => {
+        return {
+            payment_type_id: {
+                type: GraphQLInt,
+                resolve(payment_type) {
+                    return payment_type.payment_type_id;
+                }
+            },
+            type: {
+                type: GraphQLString,
+                resolve(payment_type) {
+                    return payment_type.type;
+                }
             }
-        }
+        };
     }
 });
 
 const TransactionItems = new GraphQLObjectType({
     name: 'TransactionItems',
-    description: 'This represents an Transaction Items',
+    description: 'This represents a Transaction Items',
     fields: () => {
         return {
             transaction_id: {
@@ -209,34 +210,50 @@ const TransactionItems = new GraphQLObjectType({
                     return transaction_items.tax;
                 }
             }
-        }
+        };
     }
 });
 
-/**
- * 
- */
-const TransactionNotifications = new GraphQLObjectType({
-    name: 'TransactionNotifications',
-    description: 'This represents an Transaction Notifications',
+const TransactionPayments = new GraphQLObjectType({
+    name: 'TransactionPayment',
+    description: 'This represents a Transaction Payment',
     fields: () => {
         return {
-            transaction_id: {
+            // transaction_id: {
+            //     type: GraphQLInt,
+            //     description: "The id of the transaction",
+            //     resolve(transaction_payment) {
+            //         return transaction_payment.transaction_id;
+            //     }
+            // },
+            payment_type_id: {
                 type: GraphQLInt,
-                resolve(transaction_notifications) {
-                    return transaction_notifications.transaction_id;
+                resolve(transaction_payment) {
+                    return transaction_payment.transaction_id;
                 }
             },
-            notification_id: {
+            ammount: {
+                type: GraphQLFloat,
+                resolve(transaction_payment) {
+                    return transaction_payment.paid;
+                }
+            },
+            payment_type: {
                 type: GraphQLString,
-                resolve(transaction_notifications) {
-                    return transaction_notifications.notification_id;
+                resolve(root, args) {
+                    // Basically if the model exists
+                    // we are able to call it from the schema
+                    return Db.models.payment_type.findByPk(root.payment_type_id)
+                    .then(project => {
+                        return project.type;
+                    })
                 }
             },
-        }
+            
+        };
     }
 });
-/**/
+
 
 const Query = new GraphQLObjectType({
     name: 'Query',
@@ -247,11 +264,10 @@ const Query = new GraphQLObjectType({
                 type: new GraphQLList(Account),
                 args: {
                     account_id: {
-                        type: GraphQLInt    
+                        type: GraphQLInt
                     }
                 },
                 resolve(root, args) {
-                    let a_args = args
                     return Db.models.account.findAll({
                         where: args
                     });
@@ -265,7 +281,6 @@ const Query = new GraphQLObjectType({
                     }
                 },
                 resolve(root, args) {
-                    // console.log(Db.models.account_purses);
                     return Db.models.purse.findAll({
                         where: args
                     });
@@ -273,8 +288,12 @@ const Query = new GraphQLObjectType({
             },
             establishment: {
                 type: new GraphQLList(Establishment),
+                args: {
+                    establishment_id: {
+                        type: GraphQLInt
+                    }
+                },
                 resolve(root, args) {
-                    // console.log(Db.models.establishment);
                     return Db.models.establishment.findAll({
                         where: args
                     });
@@ -288,7 +307,6 @@ const Query = new GraphQLObjectType({
                     }
                 },
                 resolve(root, args) {
-                    // console.log(Db.models.transaction);
                     return Db.models.transaction.findAll({
                         where: args
                     });
@@ -296,37 +314,33 @@ const Query = new GraphQLObjectType({
             },
             notification: {
                 type: new GraphQLList(Notification),
+                args: {
+                    notification_id: {
+                        type: GraphQLInt
+                    }
+                },
                 resolve(root, args) {
-                    // console.log(Db.models.notification);
                     return Db.models.notification.findAll({
                         where: args
                     });
                 }
             },
-            transaction_items: {
-                type: new GraphQLList(TransactionItems),
+            phone_number: {
+                type: new GraphQLList(PhoneNumber),
                 args: {
-                    // transaction_id: {
-                    //     type: GraphQLInt
-                    // }
+                    phone_number_id: {
+                        type: GraphQLInt
+                    }
                 },
                 resolve(root, args) {
-                    // console.log(Db.models.transaction);
-                    return Db.models.transaction_items.findAll({
+                    return Db.models.phone_number.findAll({
                         where: args
                     });
                 }
             },
-            // transaction_notifications: {
-            //     type: new GraphQLList(TransactionNotifications),
-            //     resolve(root, args) {
-            //         // console.log(Db.models.transaction);
-            //         return Db.models.transaction_notifications.findAll();
-            //     }
-            // },
-        }
+        };
     }
-})
+});
 
 const Account = new GraphQLObjectType({
     name: 'Account',
@@ -337,25 +351,25 @@ const Account = new GraphQLObjectType({
             account_id: {
                 type: GraphQLInt,
                 resolve(account) {
-                    return account.account_id
+                    return account.account_id;
                 }
             },
             firstName: {
                 type: GraphQLString,
                 resolve(account) {
-                    return account.firstName
+                    return account.firstName;
                 }
             },
             lastName: {
                 type: GraphQLString,
                 resolve(account) {
-                    return account.lastName
+                    return account.lastName;
                 }
             },
             dob: {
                 type: GraphQLString,
                 resolve(account) {
-                    return account.dob
+                    return account.dob;
                 }
             },
             
@@ -371,15 +385,9 @@ const Account = new GraphQLObjectType({
                     return account.getNotifications();
                 }
             },
-            transaction: {
-                type: new GraphQLList(Transaction),
-                resolve(account) {
-                    return account.getTransactions();
-                }
-            },
-        }
+        };
     }
-})
+});
 
 const Purse = new GraphQLObjectType({
     name: 'Purse',
@@ -389,19 +397,19 @@ const Purse = new GraphQLObjectType({
             purse_id: {
                 type: GraphQLInt,
                 resolve(purse) {
-                    return purse.purse_id
+                    return purse.purse_id;
                 }
             },
             name: {
                 type: GraphQLString,
                 resolve(purse) {
-                    return purse.name
+                    return purse.name;
                 }
             },
             description: {
                 type: GraphQLString,
                 resolve(purse) {
-                    return purse.description
+                    return purse.description;
                 }
             },
             account: {
@@ -409,45 +417,62 @@ const Purse = new GraphQLObjectType({
                 resolve(purse) {
                     return purse.getAccounts();
                 }
-            }
-        }
+            },
+            transaction: {
+                type: new GraphQLList(Transaction),
+                resolve(purse) {
+                    return purse.getTransactions();
+                }
+            },
+        };
+    }
+});
+
+const PhoneNumber = new GraphQLObjectType({
+    name: 'PhoneNumber',
+    description: 'This represents an PhoneNumber',
+    fields: () => {
+        return {
+            phone_number_id: {
+                type: GraphQLInt,
+                resolve(phonenumber) {
+                    return phonenumber.phone_number_id;
+                }
+            },
+            number: {
+                type: GraphQLString,
+                resolve(phonenumber) {
+                    return phonenumber.number;
+                }
+            },
+        };
     }
 });
 
 // const Mutation = new GraphQLObjectType({
-//     name: 'Mutation',
-//     description: 'Functions to create stuff',
-//     fields: () => {
-//         return {
-//             addPerson:{
-//                 type: Person,
-//                 args: {
-//                     firstName: {
-//                         type: new GraphQLNonNull(GraphQLString)
-//                     },
-//                     lastName: {
-//                         type: new GraphQLNonNull(GraphQLString)
-//                     },
-//                     email: {
-//                         type: new GraphQLNonNull(GraphQLString)
-//                     }
+//     name: 'Mutations',
+//     description: 'Functions to set stuff',
+//     fields:{
+//         addPhoneNumber: {
+//             type: PhoneNumber,
+//             args: {
+//                 number: {
+//                     type: new GraphQLNonNull(GraphQLString)
 //                 },
-//                 resolve(_, args){
-//                     return Db.models.person.create({
-//                         firstName: args.firstName,
-//                         lastName: args.lastName,
-//                         email: args.email.toLowerCase()
-//                     });
-//                 }
+//             },
+//             resolve(source, args) {
+//                 return Db.models.phone_number.create({
+//                     number: args.number,
+//                 });
 //             }
 //         }
 //     }
-// })
+// });
 
 const Schema = new GraphQLSchema({
     query: Query,
     // mutation: Mutation
-})
+});
 
-// export default Schema;
+
 module.exports = Schema;
