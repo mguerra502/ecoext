@@ -37,6 +37,9 @@ const EstablishmentTransactions     = Conn.import(__dirname + "/db/schema/Establ
 
 const Notification                  = Conn.import(__dirname + "/db/schema/Notification");
 
+// IS needed here to be used by schema
+const PaymentType                   = Conn.import(__dirname + "/db/schema/PaymentType");
+
 Account.belongsToMany(Notification, {through: AccountNotifications, foreignKey: 'account_id'});
 Notification.belongsToMany(Account, {through: AccountNotifications, foreignKey: 'notification_id'});
 

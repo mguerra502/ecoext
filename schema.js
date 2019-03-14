@@ -48,13 +48,12 @@ const Establishment = new GraphQLObjectType({
                     return establishment.lon;
                 }
             },
-            phonenumber: {
-                type: new GraphQLList(PhoneNumber),
-                resolve(establishment) {
-                    return establishment.getPhoneNumbers();
-                    return establishment.getNotifications();
-                }
-            },
+            // phonenumber: {
+            //     type: new GraphQLList(PhoneNumber),
+            //     resolve(establishment) {
+            //         return establishment.getPhoneNumbers();
+            //     }
+            // },
             notifications: {
                 type: new GraphQLList(Notification),
                 resolve(establishment) {
@@ -148,12 +147,30 @@ const Transaction = new GraphQLObjectType({
             payment: {
                 type: new GraphQLList(TransactionPayments),
                 resolve(transaction) {
-                    // return transaction.getNotifications();
-                    // return transaction.getTransactionItems();
                     return transaction.getTransactionPayments();
-                    // return transaction.getPayments();
                 }
             },
+        };
+    }
+});
+
+const PaymentType = new GraphQLObjectType({
+    name: 'PaymentType',
+    description: 'This represents an Payment Type',
+    fields: () => {
+        return {
+            payment_type_id: {
+                type: GraphQLInt,
+                resolve(payment_type) {
+                    return payment_type.payment_type_id;
+                }
+            },
+            type: {
+                type: GraphQLString,
+                resolve(payment_type) {
+                    return payment_type.type;
+                }
+            }
         };
     }
 });
@@ -196,29 +213,43 @@ const TransactionItems = new GraphQLObjectType({
         };
     }
 });
+
 const TransactionPayments = new GraphQLObjectType({
     name: 'TransactionPayment',
     description: 'This represents a Transaction Payment',
     fields: () => {
         return {
-            transaction_id: {
-                type: GraphQLInt,
-                resolve(transaction_items) {
-                    return transaction_items.transaction_id;
-                }
-            },
+            // transaction_id: {
+            //     type: GraphQLInt,
+            //     description: "The id of the transaction",
+            //     resolve(transaction_payment) {
+            //         return transaction_payment.transaction_id;
+            //     }
+            // },
             payment_type_id: {
                 type: GraphQLInt,
-                resolve(transaction_items) {
-                    return transaction_items.transaction_id;
+                resolve(transaction_payment) {
+                    return transaction_payment.transaction_id;
                 }
             },
-            paid: {
+            ammount: {
                 type: GraphQLFloat,
-                resolve(transaction_items) {
-                    return transaction_items.paid;
+                resolve(transaction_payment) {
+                    return transaction_payment.paid;
                 }
             },
+            payment_type: {
+                type: GraphQLString,
+                resolve(root, args) {
+                    // Basically if the model exists
+                    // we are able to call it from the schema
+                    return Db.models.payment_type.findByPk(root.payment_type_id)
+                    .then(project => {
+                        return project.type;
+                    })
+                }
+            },
+            
         };
     }
 });
