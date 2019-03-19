@@ -5,7 +5,7 @@ const {
   ECOEXT_DATABASE,
   ECOEXT_DATABASE_USER,
   ECOEXT_DATABASE_ROOTPASSWORD
-} = require("./utils/config")
+} = require("./utils/config");
 
 const Conn = new Sequelize(
   {
@@ -18,25 +18,27 @@ const Conn = new Sequelize(
   }
 );
 
-const Purse                         = Conn.import(__dirname + "/db/schema/Purse")
-const Account                       = Conn.import(__dirname + "/db/schema/Account")
-const AccountPurses                 = Conn.import(__dirname + "/db/schema/AccountPurses")
+const Purse                         = Conn.import(__dirname + "/db/schema/Purse");
+const PurseTransactions             = Conn.import(__dirname + "/db/schema/PurseTransaction");
 
-const AccountNotifications          = Conn.import(__dirname + "/db/schema/AccountNotifications")
+const Account                       = Conn.import(__dirname + "/db/schema/Account");
+const AccountPurses                 = Conn.import(__dirname + "/db/schema/AccountPurses");
+const AccountNotifications          = Conn.import(__dirname + "/db/schema/AccountNotifications");
 
-const Establishment                 = Conn.import(__dirname + "/db/schema/Establishment")
+const Transaction                   = Conn.import(__dirname + "/db/schema/Transaction");
+const TransactionItems              = Conn.import(__dirname + "/db/schema/TransactionItems");
 
-const Transaction                   = Conn.import(__dirname + "/db/schema/Transaction")
-const TransactionItems              = Conn.import(__dirname + "/db/schema/TransactionItems")
+const TransactionPayments           = Conn.import(__dirname + "/db/schema/TransactionPayments");
 
-const TransactionNotifications      = Conn.import(__dirname + "/db/schema/TransactionNotifications")
+const TransactionNotifications      = Conn.import(__dirname + "/db/schema/TransactionNotifications");
 
-const PurseTransactions             = Conn.import(__dirname + "/db/schema/PurseTransaction")
+const Establishment                 = Conn.import(__dirname + "/db/schema/Establishment");
+const EstablishmentTransactions     = Conn.import(__dirname + "/db/schema/EstablishmentTransactions");
 
-const Notification                  = Conn.import(__dirname + "/db/schema/Notification")
+const Notification                  = Conn.import(__dirname + "/db/schema/Notification");
 
-const EstablishmentPhoneNumber      = Conn.import(__dirname + "/db/schema/EstablishmentPhoneNumber")
-const PhoneNumber                   = Conn.import(__dirname + "/db/schema/PhoneNumber")
+// IS needed here to be used by schema
+const PaymentType                   = Conn.import(__dirname + "/db/schema/PaymentType");
 
 const EstablishmentTransaction      = Conn.import(__dirname + "/db/schema/EstablishmentTransaction");
 
@@ -47,6 +49,7 @@ Transaction.belongsToMany(Notification, {through: TransactionNotifications, fore
 Notification.belongsToMany(Transaction, {through: TransactionNotifications, foreignKey: 'notification_id'});
 
 Transaction.hasMany(TransactionItems, {as: 'TransactionItems', foreignKey: 'transaction_id'});
+Transaction.hasMany(TransactionPayments, {as: 'TransactionPayments', foreignKey: 'transaction_id'});
 
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
@@ -54,11 +57,16 @@ Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
 Purse.belongsToMany(Transaction, {through: PurseTransactions, foreignKey: 'purse_id'});
 Transaction.belongsToMany(Purse, {through: PurseTransactions, foreignKey: 'transaction_id'});
 
+<<<<<<< HEAD
 // Establishment.hasMany(EstablishmentPhoneNumber, {as: 'PhoneNumber', foreignKey: 'establishment_id '});)
 
 /** Establishment **/
 Establishment.belongsToMany(PhoneNumber, {through: EstablishmentPhoneNumber, foreignKey: 'establishment_id'});
 PhoneNumber.belongsToMany(Establishment, {through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id'});
+=======
+Establishment.belongsToMany(Transaction, { through: EstablishmentTransactions, foreignKey: 'establishment_id' });
+Transaction.belongsToMany(Establishment, { through: EstablishmentTransactions, foreignKey: 'transaction_id' });
+>>>>>>> 2e6c5fdbe6ff9aae9f6792bb5269d42b903ab3da
 
 Establishment.belongsToMany(Transaction, {through: EstablishmentTransaction, foreignKey: 'establishment_id'});
 
