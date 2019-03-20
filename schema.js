@@ -351,6 +351,9 @@ const Account = new GraphQLObjectType({
             account_id: {
                 type: GraphQLInt,
                 resolve(account) {
+                     if (account.null) {
+                         return account.null;
+                     }
                     return account.account_id;
                 }
             },
