@@ -57,17 +57,8 @@ Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});
 Purse.belongsToMany(Transaction, {through: PurseTransactions, foreignKey: 'purse_id'});
 Transaction.belongsToMany(Purse, {through: PurseTransactions, foreignKey: 'transaction_id'});
 
-<<<<<<< HEAD
-// Establishment.hasMany(EstablishmentPhoneNumber, {as: 'PhoneNumber', foreignKey: 'establishment_id '});)
-
-/** Establishment **/
-Establishment.belongsToMany(PhoneNumber, {through: EstablishmentPhoneNumber, foreignKey: 'establishment_id'});
-PhoneNumber.belongsToMany(Establishment, {through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id'});
-=======
 Establishment.belongsToMany(Transaction, { through: EstablishmentTransactions, foreignKey: 'establishment_id' });
 Transaction.belongsToMany(Establishment, { through: EstablishmentTransactions, foreignKey: 'transaction_id' });
->>>>>>> 2e6c5fdbe6ff9aae9f6792bb5269d42b903ab3da
-
 Establishment.belongsToMany(Transaction, {through: EstablishmentTransaction, foreignKey: 'establishment_id'});
 
 /** End Establishment **/

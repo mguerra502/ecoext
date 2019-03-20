@@ -2,14 +2,15 @@ version: '3.7'
 
 services:
   ex_node:
-    image: ecoext
+    image: ecoext:latest
     env_file:
     - .env
     container_name: ex_node
-    restart: always
+    restart: on-failure
     ports:
       - 8888:3000
     volumes:
+      - /app/node_modules
       - ${ECOEXT_WEB_MAIN_VOLUME}:/app/
     command:
       nodemon -L index.js
