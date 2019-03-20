@@ -48,12 +48,12 @@ const Establishment = new GraphQLObjectType({
                     return establishment.lon;
                 }
             },
-            // phonenumber: {
-            //     type: new GraphQLList(PhoneNumber),
-            //     resolve(establishment) {
-            //         return establishment.getPhoneNumbers();
-            //     }
-            // },
+            phonenumber: {
+                type: new GraphQLList(PhoneNumber),
+                resolve(establishment) {
+                    return establishment.getPhoneNumber();
+                }
+            },
             notifications: {
                 type: new GraphQLList(Notification),
                 resolve(establishment) {
@@ -509,6 +509,8 @@ const PhoneNumber = new GraphQLObjectType({
 //             type: PhoneNumber,
 //             args: {
 //                 number: {
+//                     type: new GraphQLNonNull(GraphQLString)
+//                 },   number: {
 //                     type: new GraphQLNonNull(GraphQLString)
 //                 },
 //             },
