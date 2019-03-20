@@ -338,19 +338,6 @@ const Query = new GraphQLObjectType({
                     });
                 }
             },
-            phone_number: {
-                type: new GraphQLList(PhoneNumber),
-                args: {
-                    phone_number_id: {
-                        type: GraphQLInt
-                    }
-                },
-                resolve(root, args) {
-                    return Db.models.phone_number.findAll({
-                        where: args
-                    });
-                }
-            },
         };
     }
 });
@@ -483,12 +470,16 @@ const UserLogin = new GraphQLObjectType({
 const PhoneNumber = new GraphQLObjectType({
     name: 'PhoneNumber',
     description: 'This represents an PhoneNumber',
-    fields: () => {
-        return {
-            phone_number_id: {
+    
+    fields: () => ({
+            id: {
                 type: GraphQLInt,
                 resolve(phonenumber) {
-                    return phonenumber.phone_number_id;
+                    console.dir(phonenumber)
+                    if (phonenumber.null) {
+                        return phonenumber.null
+                    }
+                    return phonenumber.id;
                 }
             },
             number: {
@@ -497,35 +488,67 @@ const PhoneNumber = new GraphQLObjectType({
                     return phonenumber.number;
                 }
             },
-        };
+    })
+});
+
+
+const Mutation = new GraphQLObjectType({
+    name: 'Mutations',
+    description: 'Functions to set stuff',
+    // fields:{
+    fields(){
+        return {
+            addPhoneNumber: {
+                type: PhoneNumber,
+                args: {
+                    number: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                },
+                resolve(source, args) {
+                    // console.log(source)
+                    return Db.models.phone_number.create({
+                        number: args.number,
+                    })
+                    // return Db.models.phone_number.create({
+                    //     number: args.number,
+                    // })
+                }
+            },
+            addAccount: {
+                type: Account,
+                args: {
+                    firstName: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    
+                    lastName: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    gender: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    dob: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                },
+                resolve(source, args) {
+                    // console.log(source)
+                    return Db.models.account.create({
+                        firstName: args.firstName,
+                        lastName: args.lastName,
+                        gender: args.gender,
+                        dob: args.dob,
+                    })
+                }
+            },
+        }
     }
 });
 
-// const Mutation = new GraphQLObjectType({
-//     name: 'Mutations',
-//     description: 'Functions to set stuff',
-//     fields:{
-//         addPhoneNumber: {
-//             type: PhoneNumber,
-//             args: {
-//                 number: {
-//                     type: new GraphQLNonNull(GraphQLString)
-//                 },   number: {
-//                     type: new GraphQLNonNull(GraphQLString)
-//                 },
-//             },
-//             resolve(source, args) {
-//                 return Db.models.phone_number.create({
-//                     number: args.number,
-//                 });
-//             }
-//         }
-//     }
-// });
-
 const Schema = new GraphQLSchema({
     query: Query,
-    // mutation: Mutation
+    mutation: Mutation
 });
 
 

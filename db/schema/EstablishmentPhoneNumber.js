@@ -5,10 +5,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
-        phone_number_id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true
-        },
+        // phone_number_id: {
+        //     type: DataTypes.INTEGER,
+        //     primaryKey: true
+        // },
         createdAt: {
             field: 'created_at',
             type: DataTypes.DATE,

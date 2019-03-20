@@ -2,7 +2,8 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('phone_number', {
         phone_number_id: {
             type: DataTypes.INTEGER,
-            primaryKey: true
+            primaryKey: true,
+
         },
         number: {
             type: DataTypes.TEXT,
