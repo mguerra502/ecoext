@@ -40,6 +40,8 @@ const Notification                  = Conn.import(__dirname + "/db/schema/Notifi
 // IS needed here to be used by schema
 const PaymentType                   = Conn.import(__dirname + "/db/schema/PaymentType");
 
+const EstablishmentTransaction      = Conn.import(__dirname + "/db/schema/EstablishmentTransaction");
+
 Account.belongsToMany(Notification, {through: AccountNotifications, foreignKey: 'account_id'});
 Notification.belongsToMany(Account, {through: AccountNotifications, foreignKey: 'notification_id'});
 
@@ -57,5 +59,9 @@ Transaction.belongsToMany(Purse, {through: PurseTransactions, foreignKey: 'trans
 
 Establishment.belongsToMany(Transaction, { through: EstablishmentTransactions, foreignKey: 'establishment_id' });
 Transaction.belongsToMany(Establishment, { through: EstablishmentTransactions, foreignKey: 'transaction_id' });
+Establishment.belongsToMany(Transaction, {through: EstablishmentTransaction, foreignKey: 'establishment_id'});
+
+/** End Establishment **/
+
 
 module.exports = Conn;
