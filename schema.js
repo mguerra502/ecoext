@@ -154,26 +154,26 @@ const Transaction = new GraphQLObjectType({
     }
 });
 
-const PaymentType = new GraphQLObjectType({
-    name: 'PaymentType',
-    description: 'This represents an Payment Type',
-    fields: () => {
-        return {
-            payment_type_id: {
-                type: GraphQLInt,
-                resolve(payment_type) {
-                    return payment_type.payment_type_id;
-                }
-            },
-            type: {
-                type: GraphQLString,
-                resolve(payment_type) {
-                    return payment_type.type;
-                }
-            }
-        };
-    }
-});
+// const PaymentType = new GraphQLObjectType({
+//     name: 'PaymentType',
+//     description: 'This represents an Payment Type',
+//     fields: () => {
+//         return {
+//             payment_type_id: {
+//                 type: GraphQLInt,
+//                 resolve(payment_type) {
+//                     return payment_type.payment_type_id;
+//                 }
+//             },
+//             type: {
+//                 type: GraphQLString,
+//                 resolve(payment_type) {
+//                     return payment_type.type;
+//                 }
+//             }
+//         };
+//     }
+// });
 
 const TransactionItems = new GraphQLObjectType({
     name: 'TransactionItems',
@@ -246,7 +246,7 @@ const TransactionPayments = new GraphQLObjectType({
                     return Db.models.payment_type.findByPk(root.payment_type_id)
                     .then(project => {
                         return project.type;
-                    })
+                    });
                 }
             },
             
@@ -282,6 +282,19 @@ const Query = new GraphQLObjectType({
                 },
                 resolve(root, args) {
                     return Db.models.purse.findAll({
+                        where: args
+                    });
+                }
+            },
+            user: {
+                type: new GraphQLList(UserLogin),
+                args: {
+                    user_id: {
+                        type: GraphQLString
+                    }
+                },
+                resolve(root, args) {
+                    return Db.models.user_login.findAll({
                         where: args
                     });
                 }
@@ -422,6 +435,45 @@ const Purse = new GraphQLObjectType({
                 type: new GraphQLList(Transaction),
                 resolve(purse) {
                     return purse.getTransactions();
+                }
+            },
+        };
+    }
+});
+
+const UserLogin = new GraphQLObjectType({
+    name: 'UserLogin',
+    description: 'This represents a UserLogin',
+    fields: () => {
+        return {
+            account_id: {
+                type: GraphQLInt,
+                resolve(userlogin) {
+                    return userlogin.account_id;
+                }
+            },
+            email: {
+                type: GraphQLString,
+                resolve(userlogin) {
+                    return userlogin.email;
+                }
+            },
+            passwrod: {
+                type: GraphQLString,
+                resolve(userlogin) {
+                    return userlogin.passwrod;
+                }
+            },
+            user_id: {
+                type: GraphQLString,
+                resolve(userlogin) {
+                    return userlogin.user_id;
+                }
+            },
+            account: {
+                type: Account,
+                resolve(userlogin) {
+                    return userlogin.getAccount();
                 }
             },
         };

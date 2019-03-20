@@ -65,3 +65,5 @@ docker/data/
 package-lock.json
 db/mysql/
 db/mariadb/
+
+.jshintrc

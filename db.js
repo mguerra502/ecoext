@@ -41,6 +41,7 @@ const Notification                  = Conn.import(__dirname + "/db/schema/Notifi
 const PaymentType                   = Conn.import(__dirname + "/db/schema/PaymentType");
 
 const EstablishmentTransaction      = Conn.import(__dirname + "/db/schema/EstablishmentTransaction");
+const UserLogin                     = Conn.import(__dirname + "/db/schema/UserLogin");
 
 Account.belongsToMany(Notification, {through: AccountNotifications, foreignKey: 'account_id'});
 Notification.belongsToMany(Account, {through: AccountNotifications, foreignKey: 'notification_id'});
@@ -50,6 +51,9 @@ Notification.belongsToMany(Transaction, {through: TransactionNotifications, fore
 
 Transaction.hasMany(TransactionItems, {as: 'TransactionItems', foreignKey: 'transaction_id'});
 Transaction.hasMany(TransactionPayments, {as: 'TransactionPayments', foreignKey: 'transaction_id'});
+
+// UserLogin.hasOne(Account, {as: 'UserAccount', foreignKey: 'account_id'});
+UserLogin.hasOne(Account, {foreignKey: 'account_id'});
 
 Account.belongsToMany(Purse, {through: AccountPurses, foreignKey: 'account_id'});
 Purse.belongsToMany(Account, {through: AccountPurses, foreignKey: 'purse_id'});

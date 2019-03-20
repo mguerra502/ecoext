@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('transaction_payments', {
+    return sequelize.define('transaction_payment', {
         transaction_id: {
             type: DataTypes.INTEGER,
             primaryKey: true
@@ -23,4 +23,4 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         freezeTableName: true
     });
-}
+};
