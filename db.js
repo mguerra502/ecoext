@@ -40,6 +40,7 @@ const Notification                  = Conn.import(__dirname + "/db/schema/Notifi
 
 // IS needed here to be used by schema
 const PaymentType                   = Conn.import(__dirname + "/db/schema/PaymentType");
+const Keys                          = Conn.import(__dirname + "/db/schema/Keys");
 const PhoneNumber                   = Conn.import(__dirname + "/db/schema/PhoneNumber");
 
 // const EstablishmentTransaction      = Conn.import(__dirname + "/db/schema/EstablishmentTransaction");

@@ -338,6 +338,19 @@ const Query = new GraphQLObjectType({
                     });
                 }
             },
+            keys: {
+                type: new GraphQLList(Keys),
+                args: {
+                    id: {
+                        type: GraphQLInt
+                    }
+                },
+                resolve(root, args) {
+                    return Db.models.keys.findAll({
+                        where: args
+                    });
+                }
+            },
         };
     }
 });
@@ -494,6 +507,47 @@ const PhoneNumber = new GraphQLObjectType({
     })
 });
 
+const Keys = new GraphQLObjectType({
+    name: 'Keys',
+    description: 'This represents a Key',
+    
+    fields: () => ({
+            id: {
+                type: GraphQLString,
+                resolve(keys) {
+                    console.dir(keys)
+                    if (keys.null) {
+                        return keys.null
+                    }
+                    return keys.id;
+                }
+            },
+            key_aes: {
+                type: GraphQLString,
+                resolve(keys) {
+                    return keys.key_aes;
+                }
+            },
+            key_iv: {
+                type: GraphQLString,
+                resolve(keys) {
+                    return keys.key_iv;
+                }
+            },
+            ipv4: {
+                type: GraphQLString,
+                resolve(keys) {
+                    return keys.ipv4;
+                }
+            },
+            port: {
+                type: GraphQLInt,
+                resolve(keys) {
+                    return keys.port;
+                }
+            },
+    })
+});
 
 const Mutation = new GraphQLObjectType({
     name: 'Mutations',
@@ -542,6 +596,37 @@ const Mutation = new GraphQLObjectType({
                         lastName: args.lastName,
                         gender: args.gender,
                         dob: args.dob,
+                    })
+                }
+            },
+            addKeys: {
+                type: Keys,
+                args: {
+                    id: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    
+                    key_aes: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    key_iv: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    ipv4: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    port: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                },
+                resolve(source, args) {
+                    // console.log(source)
+                    return Db.models.keys.create({
+                        id: args.id,
+                        key_aes: args.key_aes,
+                        key_iv: args.key_iv,
+                        ipv4: args.ipv4,
+                        port: args.port
                     })
                 }
             },
