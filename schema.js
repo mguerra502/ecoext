@@ -665,32 +665,20 @@ const Mutation = new GraphQLObjectType({
                     label: {
                         type: new GraphQLNonNull(GraphQLString)
                     },
-                    // date: {
-                    //     type: new GraphQLNonNull(GraphQLInt)
-                    // },
                     description: {
                         type: new GraphQLNonNull(GraphQLString)
                     },
                     items: {
-                        // type: new GraphQLList(GraphQLString)
                         type: new GraphQLList(InputTransactionItems)
-                        // type: new GraphQLList(new GraphQLInputObjectType({
-                        //     name: "Teste"
-                        // }))
                     },
                     
                 },
                 resolve(source, args) {
-                    // console.log(source)
-                    // const transaction_result = args.items[1];
-                    // console.dir(args.items);
                     return Db.models.transaction.create({
                         label: args.label,
-                        // date: 11111111,
                         date: new Date().toISOString().slice(0, 19).replace('T', ' '),
                         description: args.description,
                     })
-                    /*
                     .then((result) => {
                         const transactionItems_array = [];
                         const tid = result.null;
@@ -707,9 +695,8 @@ const Mutation = new GraphQLObjectType({
                         
                         const items_result = Db.models.transaction_items.bulkCreate(transactionItems_array);
 
-                        return tid;
+                        return result;
                     });
-                    /* */
                 }
             },
         }
