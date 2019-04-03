@@ -1,4 +1,6 @@
-const graphql = require('graphql');
+// const graphql = require('graphql');
+const encrypter = require("./utils/encrypter");
+const decrypter = require("./utils/decrypter");
 
 const {
     GraphQLObjectType,
@@ -518,9 +520,8 @@ const PhoneNumber = new GraphQLObjectType({
             id: {
                 type: GraphQLInt,
                 resolve(phonenumber) {
-                    console.dir(phonenumber)
                     if (phonenumber.null) {
-                        return phonenumber.null
+                        return phonenumber.null;
                     }
                     return phonenumber.id;
                 }
@@ -542,9 +543,8 @@ const Keys = new GraphQLObjectType({
             id: {
                 type: GraphQLString,
                 resolve(keys) {
-                    console.dir(keys)
                     if (keys.null) {
-                        return keys.null
+                        return keys.null;
                     }
                     return keys.id;
                 }
@@ -593,7 +593,7 @@ const Mutation = new GraphQLObjectType({
                     // console.log(source)
                     return Db.models.phone_number.create({
                         number: args.number,
-                    })
+                    });
                     // return Db.models.phone_number.create({
                     //     number: args.number,
                     // })
@@ -623,7 +623,7 @@ const Mutation = new GraphQLObjectType({
                         lastName: args.lastName,
                         gender: args.gender,
                         dob: args.dob,
-                    })
+                    });
                 }
             },
             addKeys: {
@@ -654,7 +654,7 @@ const Mutation = new GraphQLObjectType({
                         key_iv: args.key_iv,
                         ipv4: args.ipv4,
                         port: args.port
-                    })
+                    });
                 }
             },
             // addMovies(movies: [MovieInput]): [Movie]
@@ -683,6 +683,16 @@ const Mutation = new GraphQLObjectType({
                         const transactionItems_array = [];
                         const tid = result.null;
 
+                        // console.log(new encrypter(String(tid)));
+                        const enc = new encrypter(String(tid));
+                        
+                        console.log("token: " + enc.token);
+                        console.log("keyAES: " + enc.keyAES);
+                        console.log("keyIV: " + enc.keyIV);
+
+                        var b = new decrypter(enc.token, enc.keyAES, enc.keyIV);
+                        console.log(b.id);
+                        
                         args.items.forEach(element => {
                             transactionItems_array.push({
                                 transaction_id: result.null,
@@ -699,7 +709,7 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
-        }
+        };
     }
 });
 

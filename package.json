@@ -14,18 +14,15 @@
     },
     {
       "name": "Miguel Guerra",
-      "email": "",
-      "url": ""
+      "email": "mguerra502@gmail.com"
     },
     {
       "name": "Asmer Bracho",
-      "email": "",
-      "url": ""
+      "email": "asmeralef@gmail.com"
     },
     {
       "name": "Eduardo Firino",
-      "email": "",
-      "url": ""
+      "email": "edufirino@gmail.com"
     }
   ],
   "private": true,
@@ -41,15 +38,17 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "crypto-js": "^3.1.9-1",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
-    "graphql": "^14.1.1",
-    "graphiql": "^0.13.0",
     "express-graphql": "^0.7.1",
+    "graphiql": "^0.13.0",
+    "graphql": "^14.2.1",
+    "graphql-relay": "^0.6.0",
+    "hex64": "^0.4.0",
+    "mysql2": "^1.6.4",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "graphql-relay": "^0.6.0",
-    "mysql2": "^1.6.4",
     "sequelize": "^4.41.2"
   },
   "devDependencies": {

@@ -67,8 +67,8 @@ Transaction.belongsToMany(Purse, {through: PurseTransactions, foreignKey: 'trans
 Establishment.belongsToMany(Transaction, { through: EstablishmentTransactions, foreignKey: 'establishment_id' });
 Transaction.belongsToMany(Establishment, { through: EstablishmentTransactions, foreignKey: 'transaction_id' });
 
-Establishment.belongsToMany(PhoneNumber, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'establishment_id' })
-PhoneNumber.belongsToMany(Establishment, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id' })
+Establishment.belongsToMany(PhoneNumber, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'establishment_id' });
+PhoneNumber.belongsToMany(Establishment, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id' });
 
 /** End Establishment **/
 
