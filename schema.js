@@ -10,7 +10,7 @@ const {
     GraphQLList,
     GraphQLNonNull,
     GraphQLFloat,
-    GraphQLInputObjectType
+    GraphQLInputObjectType,
 } = require('graphql');
 
 const Db = require('./db');
@@ -156,30 +156,15 @@ const Transaction = new GraphQLObjectType({
                     return transaction.getTransactionPayments();
                 }
             },
+            token_id: {
+                type: GraphQLString,
+                resolve(transaction){
+                    return transaction.token_id;
+                }
+            }
         };
     }
 });
-
-// const PaymentType = new GraphQLObjectType({
-//     name: 'PaymentType',
-//     description: 'This represents an Payment Type',
-//     fields: () => {
-//         return {
-//             payment_type_id: {
-//                 type: GraphQLInt,
-//                 resolve(payment_type) {
-//                     return payment_type.payment_type_id;
-//                 }
-//             },
-//             type: {
-//                 type: GraphQLString,
-//                 resolve(payment_type) {
-//                     return payment_type.type;
-//                 }
-//             }
-//         };
-//     }
-// });
 
 const TransactionItems = new GraphQLObjectType({
     name: 'TransactionItems',
@@ -243,20 +228,26 @@ const InputTransactionItems = new GraphQLInputObjectType({
     }
 });
 
-const InputKeys = new GraphQLInputObjectType({
-    name: 'InputKeys',
+const InputTransactionPayment = new GraphQLInputObjectType({
+    name: 'InputTransactionPayment',
+    description: 'This represents a InputTransactionPayment',
+    fields: () => {
+        return {
+            ammount: {
+                type: GraphQLFloat,
+            },
+            payment_type: {
+                type: GraphQLString,
+            }
+        };
+    }
+});
+
+const InputSocketInfo = new GraphQLInputObjectType({
+    name: 'InputSocketInfo',
     description: 'This represents a Transaction Items',
     fields: () => {
         return {
-            // id: {
-            //     type: GraphQLString,
-            // },
-            // key_aes: {
-            //     type: GraphQLString,
-            // },
-            // key_iv: {
-            //     type: GraphQLString,
-            // },
             ipv4: {
                 type: GraphQLString,
             },
@@ -272,13 +263,7 @@ const TransactionPayments = new GraphQLObjectType({
     description: 'This represents a Transaction Payment',
     fields: () => {
         return {
-            // transaction_id: {
-            //     type: GraphQLInt,
-            //     description: "The id of the transaction",
-            //     resolve(transaction_payment) {
-            //         return transaction_payment.transaction_id;
-            //     }
-            // },
+            
             payment_type_id: {
                 type: GraphQLInt,
                 resolve(transaction_payment) {
@@ -297,7 +282,7 @@ const TransactionPayments = new GraphQLObjectType({
                     // Basically if the model exists
                     // we are able to call it from the schema
                     return Db.models.payment_type.findByPk(root.payment_type_id)
-                    .then(project => {
+                    .then((project) => {
                         return project.type;
                     });
                 }
@@ -603,7 +588,7 @@ const Keys = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name: 'Mutations',
     description: 'Functions to set stuff',
-    // fields:{
+    
     fields(){
         return {
             addPhoneNumber: {
@@ -614,13 +599,9 @@ const Mutation = new GraphQLObjectType({
                     },
                 },
                 resolve(source, args) {
-                    // console.log(source)
                     return Db.models.phone_number.create({
                         number: args.number,
                     });
-                    // return Db.models.phone_number.create({
-                    //     number: args.number,
-                    // })
                 }
             },
             addAccount: {
@@ -641,7 +622,6 @@ const Mutation = new GraphQLObjectType({
                     },
                 },
                 resolve(source, args) {
-                    // console.log(source)
                     return Db.models.account.create({
                         firstName: args.firstName,
                         lastName: args.lastName,
@@ -650,40 +630,38 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
-            addKeys: {
-                type: Keys,
-                args: {
-                    id: {
-                        type: new GraphQLNonNull(GraphQLString)
-                    },
+            // addKeys: {
+            //     type: Keys,
+            //     args: {
+            //         id: {
+            //             type: new GraphQLNonNull(GraphQLString)
+            //         },
                     
-                    key_aes: {
-                        type: new GraphQLNonNull(GraphQLString)
-                    },
-                    key_iv: {
-                        type: new GraphQLNonNull(GraphQLString)
-                    },
-                    ipv4: {
-                        type: new GraphQLNonNull(GraphQLString)
-                    },
-                    port: {
-                        type: new GraphQLNonNull(GraphQLInt)
-                    },
-                },
-                resolve(source, args) {
-                    // console.log(source)
-                    return Db.models.keys.create({
-                        id: args.id,
-                        key_aes: args.key_aes,
-                        key_iv: args.key_iv,
-                        ipv4: args.ipv4,
-                        port: args.port
-                    });
-                }
-            },
-            // addMovies(movies: [MovieInput]): [Movie]
+            //         key_aes: {
+            //             type: new GraphQLNonNull(GraphQLString)
+            //         },
+            //         key_iv: {
+            //             type: new GraphQLNonNull(GraphQLString)
+            //         },
+            //         ipv4: {
+            //             type: new GraphQLNonNull(GraphQLString)
+            //         },
+            //         port: {
+            //             type: new GraphQLNonNull(GraphQLInt)
+            //         },
+            //     },
+            //     resolve(source, args) {
+            //         return Db.models.keys.create({
+            //             id: args.id,
+            //             key_aes: args.key_aes,
+            //             key_iv: args.key_iv,
+            //             ipv4: args.ipv4,
+            //             port: args.port
+            //         });
+            //     }
+            // },
+            
             addTransaction: {
-                // type: Transaction,
                 type: Transaction,
                 args: {
                     label: {
@@ -695,19 +673,24 @@ const Mutation = new GraphQLObjectType({
                     items: {
                         type: new GraphQLList(InputTransactionItems)
                     },
-                    keys:{
-                        type: InputKeys
-                    }
+                    socketInfo:{
+                        type: InputSocketInfo
+                    },
+                    paymentInfo:{
+                        type: InputTransactionPayment
+                    },
                 },
                 resolve(source, args) {
+                    let tr_id = 0;
                     return Db.models.transaction.create({
                         label: args.label,
                         date: new Date().toISOString().slice(0, 19).replace('T', ' '),
                         description: args.description,
                     })
                     .then((result) => {
+                        tr_id = result.null;
+                        
                         const transactionItems_array = [];
-                        const tid = result.null;
                         
                         args.items.forEach(element => {
                             transactionItems_array.push({
@@ -719,25 +702,50 @@ const Mutation = new GraphQLObjectType({
                             });
                         });
                         
-                        const items_result = Db.models.transaction_items.bulkCreate(transactionItems_array);
-
-                        return result;
+                        return Db.models.transaction_items.bulkCreate(transactionItems_array);
                     })
+                    
                     .then((result) => {
-                        const tid = result.null;
-                        const enc = new encrypter(String(tid));
+                        
+                        const ammountPaid = args.paymentInfo.ammount;
+                        
+                        Db.models.payment_type.findOne({
+                            where: {
+                                type: args.paymentInfo.payment_type,
+                            },
+                        })
+                        
+                        .then((project) => {
 
-                        console.log(args.keys.port)
+                            const payment_type_id_id = project.dataValues.payment_type_id;
 
-                        const items_result = Db.models.keys.create({
+                            return Db.models.transaction_payment.create({
+                                paid: ammountPaid,
+                                transaction_id: tr_id,
+                                payment_type_id: payment_type_id_id,
+                            });
+                        });
+                        
+                    })
+
+                    .then(() => {
+                        const enc = new encrypter(String(tr_id));
+                        
+                        return Db.models.keys.create({
                             id: enc.token,
                             key_aes: enc.keyAES,
                             key_iv: enc.keyIV,
-                            port: args.keys.port,
-                            ipv4: args.keys.ipv4,
-                        });
-                        return result;
-                    });
+                            port: args.socketInfo.port,
+                            ipv4: args.socketInfo.ipv4,
+                        })
+                    }).then((encrypted) => {
+                        return {"token_id": encrypted.id, transaction_id: tr_id};
+                    })
+                    
+                    .catch((err) => {
+                        console.log("err");
+                        console.log(err);
+                    })
                 }
             },
         };
