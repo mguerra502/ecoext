@@ -7,7 +7,8 @@ const {
     GraphQLSchema,
     GraphQLList,
     GraphQLNonNull,
-    GraphQLFloat
+    GraphQLFloat,
+    GraphQLInputObjectType
 } = require('graphql');
 
 const Db = require('./db');
@@ -111,6 +112,9 @@ const Transaction = new GraphQLObjectType({
             transaction_id: {
                 type: GraphQLInt,
                 resolve(transaction) {
+                    if (transaction.null) {
+                        return transaction.null;
+                    }
                     return transaction.transaction_id;
                 }
             },
@@ -209,6 +213,29 @@ const TransactionItems = new GraphQLObjectType({
                 resolve(transaction_items) {
                     return transaction_items.tax;
                 }
+            }
+        };
+    }
+});
+const InputTransactionItems = new GraphQLInputObjectType({
+    name: 'Items',
+    description: 'This represents a Transaction Items',
+    fields: () => {
+        return {
+            transaction_id: {
+                type: GraphQLInt,
+            },
+            product: {
+                type: GraphQLString,
+            },
+            price: {
+                type: GraphQLFloat,
+            },
+            quantity: {
+                type: GraphQLInt,
+            },
+            tax: {
+                type: GraphQLFloat,
             }
         };
     }
@@ -628,6 +655,61 @@ const Mutation = new GraphQLObjectType({
                         ipv4: args.ipv4,
                         port: args.port
                     })
+                }
+            },
+            // addMovies(movies: [MovieInput]): [Movie]
+            addTransaction: {
+                // type: Transaction,
+                type: Transaction,
+                args: {
+                    label: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    // date: {
+                    //     type: new GraphQLNonNull(GraphQLInt)
+                    // },
+                    description: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    items: {
+                        // type: new GraphQLList(GraphQLString)
+                        type: new GraphQLList(InputTransactionItems)
+                        // type: new GraphQLList(new GraphQLInputObjectType({
+                        //     name: "Teste"
+                        // }))
+                    },
+                    
+                },
+                resolve(source, args) {
+                    // console.log(source)
+                    // const transaction_result = args.items[1];
+                    // console.dir(args.items);
+                    return Db.models.transaction.create({
+                        label: args.label,
+                        // date: 11111111,
+                        date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                        description: args.description,
+                    })
+                    /*
+                    .then((result) => {
+                        const transactionItems_array = [];
+                        const tid = result.null;
+
+                        args.items.forEach(element => {
+                            transactionItems_array.push({
+                                transaction_id: result.null,
+                                price: element.price,
+                                product: element.product,
+                                quantity: element.quantity,
+                                tax: element.tax
+                            });
+                        });
+                        
+                        const items_result = Db.models.transaction_items.bulkCreate(transactionItems_array);
+
+                        return tid;
+                    });
+                    /* */
                 }
             },
         }
