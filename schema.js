@@ -243,6 +243,30 @@ const InputTransactionItems = new GraphQLInputObjectType({
     }
 });
 
+const InputKeys = new GraphQLInputObjectType({
+    name: 'InputKeys',
+    description: 'This represents a Transaction Items',
+    fields: () => {
+        return {
+            // id: {
+            //     type: GraphQLString,
+            // },
+            // key_aes: {
+            //     type: GraphQLString,
+            // },
+            // key_iv: {
+            //     type: GraphQLString,
+            // },
+            ipv4: {
+                type: GraphQLString,
+            },
+            port: {
+                type: GraphQLInt,
+            }
+        };
+    }
+});
+
 const TransactionPayments = new GraphQLObjectType({
     name: 'TransactionPayment',
     description: 'This represents a Transaction Payment',
@@ -671,7 +695,9 @@ const Mutation = new GraphQLObjectType({
                     items: {
                         type: new GraphQLList(InputTransactionItems)
                     },
-                    
+                    keys:{
+                        type: InputKeys
+                    }
                 },
                 resolve(source, args) {
                     return Db.models.transaction.create({
@@ -682,16 +708,6 @@ const Mutation = new GraphQLObjectType({
                     .then((result) => {
                         const transactionItems_array = [];
                         const tid = result.null;
-
-                        // console.log(new encrypter(String(tid)));
-                        const enc = new encrypter(String(tid));
-                        
-                        console.log("token: " + enc.token);
-                        console.log("keyAES: " + enc.keyAES);
-                        console.log("keyIV: " + enc.keyIV);
-
-                        var b = new decrypter(enc.token, enc.keyAES, enc.keyIV);
-                        console.log(b.id);
                         
                         args.items.forEach(element => {
                             transactionItems_array.push({
@@ -706,12 +722,29 @@ const Mutation = new GraphQLObjectType({
                         const items_result = Db.models.transaction_items.bulkCreate(transactionItems_array);
 
                         return result;
+                    })
+                    .then((result) => {
+                        const tid = result.null;
+                        const enc = new encrypter(String(tid));
+
+                        console.log(args.keys.port)
+
+                        const items_result = Db.models.keys.create({
+                            id: enc.token,
+                            key_aes: enc.keyAES,
+                            key_iv: enc.keyIV,
+                            port: args.keys.port,
+                            ipv4: args.keys.ipv4,
+                        });
+                        return result;
                     });
                 }
             },
         };
     }
 });
+
+// TODO remove addKeys Mutation
 
 const Schema = new GraphQLSchema({
     query: Query,

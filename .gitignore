@@ -67,3 +67,4 @@ db/mysql/
 db/mariadb/
 
 .jshintrc
+.vscode/
