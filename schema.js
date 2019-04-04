@@ -681,36 +681,6 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
-            // addKeys: {
-            //     type: Keys,
-            //     args: {
-            //         id: {
-            //             type: new GraphQLNonNull(GraphQLString)
-            //         },
-                    
-            //         key_aes: {
-            //             type: new GraphQLNonNull(GraphQLString)
-            //         },
-            //         key_iv: {
-            //             type: new GraphQLNonNull(GraphQLString)
-            //         },
-            //         ipv4: {
-            //             type: new GraphQLNonNull(GraphQLString)
-            //         },
-            //         port: {
-            //             type: new GraphQLNonNull(GraphQLInt)
-            //         },
-            //     },
-            //     resolve(source, args) {
-            //         return Db.models.keys.create({
-            //             id: args.id,
-            //             key_aes: args.key_aes,
-            //             key_iv: args.key_iv,
-            //             ipv4: args.ipv4,
-            //             port: args.port
-            //         });
-            //     }
-            // },
             
             addTransaction: {
                 type: Transaction,
@@ -806,15 +776,42 @@ const Mutation = new GraphQLObjectType({
                         type: new GraphQLNonNull(GraphQLInt)
                     },
                     
-                    transaction_id: {
-                        type: new GraphQLNonNull(GraphQLInt)
+                    transaction_token: {
+                        type: new GraphQLNonNull(GraphQLString)
                     },
                 },
                 resolve(source, args) {
-                    return Db.models.purse_transactions.create({
-                        purse_id: args.purse_id,
-                        transaction_id: args.transaction_id,
-                    });
+
+                    const token = args.transaction_token;
+
+                    return Db.models.keys.findOne({
+                        where: {
+                            id: token
+                        }
+                    })
+                    .then((foundToken) => {
+                        const key_aes = foundToken.dataValues.key_aes;
+                        const key_iv = foundToken.dataValues.key_iv;
+
+                        return new decrypter(token, key_aes, key_iv).id;
+                    })
+                    .then((transaction_id) => {
+                        return Db.models.purse_transactions.create({
+                            purse_id: args.purse_id,
+                            transaction_id: transaction_id
+                        })
+                    })
+                    
+                    .then((purse_transaction) => {
+                        return Db.models.keys.destroy({
+                            where: {
+                                id: token
+                            }
+                        })
+                    })
+                    .then((deleted_key) => {
+                        console.log(deleted_key)
+                    })
                 }
             },
         };
