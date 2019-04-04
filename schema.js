@@ -363,6 +363,37 @@ const Query = new GraphQLObjectType({
                     });
                 }
             },
+            transactionByToken: {
+                type: Transaction,
+                args: {
+                    id: {
+                        type: GraphQLString
+                    }
+                },
+                // TODO: promise that returns transaction id from token and then request a transaction from table transactions
+                resolve(root, args) {
+
+                    return Db.models.keys.findOne({
+                        where: args
+                    })
+                    .then((transaction) => {
+                        
+                        const token = String(transaction.dataValues.id);
+                        const keyiv = String(transaction.dataValues.key_iv);
+                        const keyaes = String(transaction.dataValues.key_aes);
+
+                        const id = new decrypter(token, keyaes, keyiv).id;
+                        
+                        // return {transaction_id: id}
+
+                        return Db.models.transaction.findOne({
+                            where: {
+                                transaction_id: id
+                            }
+                        })
+                    })
+                }
+            },
             notification: {
                 type: new GraphQLList(Notification),
                 args: {
