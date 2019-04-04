@@ -293,6 +293,28 @@ const TransactionPayments = new GraphQLObjectType({
 });
 
 
+const PurseTransaction = new GraphQLObjectType({
+    name: 'PurseTransaction',
+    description: 'This represents a Purse Transaction',
+    fields: () => {
+        return {
+            
+            purse_id: {
+                type: GraphQLInt,
+                resolve(purse_transaction) {
+                    return purse_transaction.purse_id;
+                }
+            },
+            transaction_id: {
+                type: GraphQLFloat,
+                resolve(purse_transaction) {
+                    return purse_transaction.transaction_id;
+                }
+            },
+        };
+    }
+});
+
 const Query = new GraphQLObjectType({
     name: 'Query',
     description: 'This is a root query',
@@ -370,7 +392,7 @@ const Query = new GraphQLObjectType({
                         type: GraphQLString
                     }
                 },
-                // TODO: promise that returns transaction id from token and then request a transaction from table transactions
+                
                 resolve(root, args) {
 
                     return Db.models.keys.findOne({
@@ -384,14 +406,12 @@ const Query = new GraphQLObjectType({
 
                         const id = new decrypter(token, keyaes, keyiv).id;
                         
-                        // return {transaction_id: id}
-
                         return Db.models.transaction.findOne({
                             where: {
                                 transaction_id: id
                             }
-                        })
-                    })
+                        });
+                    });
                 }
             },
             notification: {
@@ -768,7 +788,7 @@ const Mutation = new GraphQLObjectType({
                             key_iv: enc.keyIV,
                             port: args.socketInfo.port,
                             ipv4: args.socketInfo.ipv4,
-                        })
+                        });
                     }).then((encrypted) => {
                         return {"token_id": encrypted.id, transaction_id: tr_id};
                     })
@@ -776,7 +796,25 @@ const Mutation = new GraphQLObjectType({
                     .catch((err) => {
                         console.log("err");
                         console.log(err);
-                    })
+                    });
+                }
+            },
+            addTransactionToPurse: {
+                type: PurseTransaction,
+                args: {
+                    purse_id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                    
+                    transaction_id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                },
+                resolve(source, args) {
+                    return Db.models.purse_transactions.create({
+                        purse_id: args.purse_id,
+                        transaction_id: args.transaction_id,
+                    });
                 }
             },
         };

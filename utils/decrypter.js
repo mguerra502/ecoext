@@ -60,6 +60,6 @@ class decrypter {
         return this._decryptedValue;
     }
 
-};
+}
 
 module.exports = decrypter;
