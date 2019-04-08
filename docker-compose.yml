@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   ex_node:
-    image: ecoext:latest
+    image: ecoext/api:latest
     env_file:
     - .env
     container_name: ex_node

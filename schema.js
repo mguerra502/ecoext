@@ -550,10 +550,10 @@ const UserLogin = new GraphQLObjectType({
                     return userlogin.email;
                 }
             },
-            passwrod: {
+            password: {
                 type: GraphQLString,
                 resolve(userlogin) {
-                    return userlogin.passwrod;
+                    return userlogin.password;
                 }
             },
             user_id: {
@@ -647,7 +647,7 @@ const Mutation = new GraphQLObjectType({
                 args: {
                     number: {
                         type: new GraphQLNonNull(GraphQLString)
-                    },
+                    },  
                 },
                 resolve(source, args) {
                     return Db.models.phone_number.create({
@@ -814,11 +814,50 @@ const Mutation = new GraphQLObjectType({
                     })
                 }
             },
+            addUser: {
+                type: UserLogin,
+                args: {
+                    first_name: {
+                        type: GraphQLString,
+                    },
+                    last_name: {
+                        type: GraphQLString,
+                    },
+                    gender: {
+                        type: GraphQLString,
+                    },
+                    dob: {
+                        type: GraphQLFloat,
+                    },
+                    uid: {
+                        type: GraphQLString,
+                    },
+                    email: {
+                        type: GraphQLString,
+                    },
+                    password: {
+                        type: GraphQLString,
+                    },
+                },
+                resolve(source, args) {
+                    var addUser = `CALL CreateUser("${args.first_name}", "${args.last_name}", "${args.gender}", "${args.dob}", "${args.uid}", "${args.email}", "${args.password}");`;
+
+                    return Db.query(addUser, null, {
+                        raw: true
+                    }).then((result) => {
+                        return Db.models.user_login.findOne({
+                            where: {
+                                user_id: args.uid
+                            }
+                        });
+                    }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
         };
     }
 });
-
-// TODO remove addKeys Mutation
 
 const Schema = new GraphQLSchema({
     query: Query,
