@@ -40,6 +40,7 @@ const Notification                  = Conn.import(__dirname + "/db/schema/Notifi
 
 // IS needed here to be used by schema
 const PaymentType                   = Conn.import(__dirname + "/db/schema/PaymentType");
+const Keys                          = Conn.import(__dirname + "/db/schema/Keys");
 const PhoneNumber                   = Conn.import(__dirname + "/db/schema/PhoneNumber");
 
 // const EstablishmentTransaction      = Conn.import(__dirname + "/db/schema/EstablishmentTransaction");
@@ -66,8 +67,8 @@ Transaction.belongsToMany(Purse, {through: PurseTransactions, foreignKey: 'trans
 Establishment.belongsToMany(Transaction, { through: EstablishmentTransactions, foreignKey: 'establishment_id' });
 Transaction.belongsToMany(Establishment, { through: EstablishmentTransactions, foreignKey: 'transaction_id' });
 
-Establishment.belongsToMany(PhoneNumber, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'establishment_id' })
-PhoneNumber.belongsToMany(Establishment, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id' })
+Establishment.belongsToMany(PhoneNumber, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'establishment_id' });
+PhoneNumber.belongsToMany(Establishment, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id' });
 
 /** End Establishment **/
 
