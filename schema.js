@@ -969,23 +969,12 @@ const Mutation = new GraphQLObjectType({
                     },
                 },
                 resolve(source, args) {
-                    // TODO destroy notification
-                    // remove it from table notification
-                    
-                    
-                    // return Db.models.notification.findOne({
-                    //     where: {
-                    //         notification_id: args.id,
-                    //     }
-                    // })
-                    // .then((result) => {
                     return Db.models.notification.destroy({
                         where: {
                             notification_id: args.id,
                         },
                         limit: 1
                     })
-                    // })
                     .then((result) => {
 
                         const message = {
@@ -1005,6 +994,56 @@ const Mutation = new GraphQLObjectType({
                         return message;
                     })
                     .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            updateNotification: {
+                type: Notification,
+                args: {
+                    notification_id: {
+                        type: GraphQLInt,
+                    },
+                    name: {
+                        type: GraphQLString,
+                    },
+                    type: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                },
+                resolve(source, args) {
+
+                    const values = {};
+
+                    if(args.name !== null && args.name !== "" && args.name !== undefined){
+                        values.name = args.name;
+                    }
+                    if(args.type !== null && args.type !== "" && args.type !== undefined){
+                        values.type = args.type;
+                    }
+                    if(args.description !== null && args.description !== "" && args.description !== undefined){
+                        values.description = args.description;
+                    }
+                    
+                    return Db.models.notification.update(
+                        values,
+                        {
+                            where:{
+                                notification_id: args.notification_id
+                            }
+                        }
+                    )
+
+                    .then((result) => {
+                        return Db.models.notification.findOne({
+                            where:{
+                                notification_id: args.notification_id
+                            }
+                        });
+                    }).catch(function(err) {
                         console.log(err);
                     });
                 }
