@@ -890,7 +890,44 @@ const Mutation = new GraphQLObjectType({
                         console.log(err);
                     });
                 }
-            }
+            },
+            addNotification: {
+                type: Notification,
+                args: {
+                    name: {
+                        type: GraphQLString,
+                    },
+                    type: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                    account_id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    var addNotification = `CALL CreateNotification("${args.name}", "${args.type}", "${args.description}", "${args.account_id}");`;
+            
+                    return Db.query(addNotification, null, {
+                        raw: true
+                    }).then((result) => {
+                        if(result[0].id){
+
+                            const notification_id = result[0].id;
+
+                            return Db.models.notification.findOne({
+                                where: {
+                                    notification_id: notification_id
+                                }
+                            });
+                        }
+                    }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
         };
     }
 });
