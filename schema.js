@@ -1,6 +1,8 @@
 // const graphql = require('graphql');
 const encrypter = require("./utils/encrypter");
 const decrypter = require("./utils/decrypter");
+// const addPurse = require("./db/mutations/mutation.purse");
+// const Purse = require("./db/models/Purse");
 
 const {
     GraphQLObjectType,
@@ -855,6 +857,40 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
+            addPurse: {
+                type: Purse,
+                args: {
+                    name: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                    account_id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    var addPurse = `CALL CreatePurse("${args.name}", "${args.description}", "${args.account_id}");`;
+            
+                    return Db.query(addPurse, null, {
+                        raw: true
+                    }).then((result) => {
+                        if(result[0].id){
+
+                            const purse_id = result[0].id;
+
+                            return Db.models.purse.findOne({
+                                where: {
+                                    purse_id: purse_id
+                                }
+                            });
+                        }
+                    }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            }
         };
     }
 });
