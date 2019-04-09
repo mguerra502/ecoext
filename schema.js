@@ -317,6 +317,39 @@ const PurseTransaction = new GraphQLObjectType({
     }
 });
 
+const EcoExtMessageObject = new GraphQLObjectType({
+    name: 'EcoExtMessageObject',
+    description: 'This represents a EcoExT Message Object',
+    fields: () => {
+        return {
+            title: {
+                type: GraphQLString,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.title;
+                }
+            },
+            status: {
+                type: GraphQLInt,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.status;
+                }
+            },
+            error: {
+                type: GraphQLString,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.error;
+                }
+            },
+            description: {
+                type: GraphQLString,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.description;
+                }
+            },
+        };
+    }
+});
+
 const Query = new GraphQLObjectType({
     name: 'Query',
     description: 'This is a root query',
@@ -924,6 +957,54 @@ const Mutation = new GraphQLObjectType({
                             });
                         }
                     }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            deleteNotification: {
+                type: EcoExtMessageObject,
+                args: {
+                    id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    // TODO destroy notification
+                    // remove it from table notification
+                    
+                    
+                    // return Db.models.notification.findOne({
+                    //     where: {
+                    //         notification_id: args.id,
+                    //     }
+                    // })
+                    // .then((result) => {
+                    return Db.models.notification.destroy({
+                        where: {
+                            notification_id: args.id,
+                        },
+                        limit: 1
+                    })
+                    // })
+                    .then((result) => {
+
+                        const message = {
+                            title: "Not deleted",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: result.toString() + " records deleted",
+                            description: "Record has not been removed",
+                        }
+
+                        if(result == 1){
+                            message.title = "Deleted  successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been remoed from database";
+                        }
+
+                        return message;
+                    })
+                    .catch(function(err) {
                         console.log(err);
                     });
                 }
