@@ -323,6 +323,28 @@ const PurseTransaction = new GraphQLObjectType({
     }
 });
 
+const EstablishmentTransaction = new GraphQLObjectType({
+    name: 'EstablishmentTransaction',
+    description: 'This represents a Establishment Transaction',
+    fields: () => {
+        return {
+            
+            establishment_id: {
+                type: GraphQLInt,
+                resolve(purse_transaction) {
+                    return purse_transaction.establishment_id;
+                }
+            },
+            transaction_id: {
+                type: GraphQLFloat,
+                resolve(purse_transaction) {
+                    return purse_transaction.transaction_id;
+                }
+            },
+        };
+    }
+});
+
 const EcoExtMessageObject = new GraphQLObjectType({
     name: 'EcoExtMessageObject',
     description: 'This represents a EcoExT Message Object',
@@ -839,7 +861,7 @@ const Mutation = new GraphQLObjectType({
                         return Db.models.purse_transactions.create({
                             purse_id: args.purse_id,
                             transaction_id: transaction_id
-                        })
+                        });
                     })
                     
                     .then((purse_transaction) => {
@@ -847,11 +869,11 @@ const Mutation = new GraphQLObjectType({
                             where: {
                                 id: token
                             }
-                        })
+                        });
                     })
                     .then((deleted_key) => {
-                        console.log(deleted_key)
-                    })
+                        console.log(deleted_key);
+                    });
                 }
             },
             addUser: {
@@ -987,7 +1009,7 @@ const Mutation = new GraphQLObjectType({
                             status: isNaN(result.toString()) ? 500 : 200,
                             error: result.toString() + " records deleted",
                             description: "Record has not been removed",
-                        }
+                        };
 
                         if(result == 1){
                             message.title = "Deleted  successfully";
@@ -1086,7 +1108,7 @@ const Mutation = new GraphQLObjectType({
                             status: isNaN(result.toString()) ? 500 : 200,
                             error: "No records have been created",
                             description: "[ENUM_ERROR_MESSAGE]",
-                        }
+                        };
 
                         if(result.null > 0){
                             message.title = "Created successfully";
@@ -1187,7 +1209,7 @@ const Mutation = new GraphQLObjectType({
                             status: isNaN(result.toString()) ? 500 : 200,
                             error: result.toString() + " records deleted",
                             description: "Record has not been removed",
-                        }
+                        };
 
                         if(result == 1){
                             message.title = "Deleted  successfully";
@@ -1201,6 +1223,34 @@ const Mutation = new GraphQLObjectType({
                     .catch(function(err) {
                         console.log(err);
                     });
+                }
+            },
+            addTransactionTEstablishment: {
+                type: EstablishmentTransaction,
+                args: {
+                    establishment_id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                    
+                    transaction_id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                },
+                resolve(source, args) {
+                    
+                    return Db.models.establishment_transactions.create({
+                        establishment_id: args.establishment_id,
+                        transaction_id: args.transaction_id
+                    })
+                        
+                    .then((purse_transaction) => {
+                        return Db.models.establishment_transactions.findOne({
+                            where: {
+                                establishment_id: args.establishment_id,
+                                transaction_id: args.transaction_id
+                            }
+                        });
+                    })
                 }
             },
         };
