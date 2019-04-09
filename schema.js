@@ -1253,6 +1253,90 @@ const Mutation = new GraphQLObjectType({
                     })
                 }
             },
+            deletePurse: {
+                type: EcoExtMessageObject,
+                args: {
+                    id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    return Db.models.purse.destroy({
+                        where: {
+                            purse_id: args.id,
+                        },
+                        limit: 1
+                    })
+                    .then((result) => {
+
+                        const message = {
+                            title: "Not deleted",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: result.toString() + " records deleted",
+                            description: "Record has not been removed",
+                        };
+
+                        if(result == 1){
+                            message.title = "Deleted  successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been remoed from database";
+                        }
+
+                        return message;
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            updatePurse: {
+                type: Purse,
+                args: {
+                    purse_id: {
+                        type: GraphQLInt,
+                    },
+                    name: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                },
+                resolve(source, args) {
+
+                    const values = {};
+
+                    if(args.name !== null && args.name !== "" && args.name !== undefined){
+                        values.name = args.name;
+                    }
+                    if(args.description !== null && args.description !== "" && args.description !== undefined){
+                        values.description = args.description;
+                    }
+                    
+                    return Db.models.purse.update(
+                        values,
+                        {
+                            where:{
+                                purse_id: args.purse_id
+                            },
+                            limit: 1
+                        }
+                    )
+
+                    .then((result) => {
+                        return Db.models.purse.findOne({
+                            where: {
+                                purse_id: args.purse_id
+                            }
+                        });
+                    })
+                    
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
         };
     }
 });
