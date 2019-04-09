@@ -1290,6 +1290,53 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
+            updatePurse: {
+                type: Purse,
+                args: {
+                    purse_id: {
+                        type: GraphQLInt,
+                    },
+                    name: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                },
+                resolve(source, args) {
+
+                    const values = {};
+
+                    if(args.name !== null && args.name !== "" && args.name !== undefined){
+                        values.name = args.name;
+                    }
+                    if(args.description !== null && args.description !== "" && args.description !== undefined){
+                        values.description = args.description;
+                    }
+                    
+                    return Db.models.purse.update(
+                        values,
+                        {
+                            where:{
+                                purse_id: args.purse_id
+                            },
+                            limit: 1
+                        }
+                    )
+
+                    .then((result) => {
+                        return Db.models.purse.findOne({
+                            where: {
+                                purse_id: args.purse_id
+                            }
+                        });
+                    })
+                    
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
         };
     }
 });
