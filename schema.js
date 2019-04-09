@@ -317,6 +317,39 @@ const PurseTransaction = new GraphQLObjectType({
     }
 });
 
+const EcoExtMessageObject = new GraphQLObjectType({
+    name: 'EcoExtMessageObject',
+    description: 'This represents a EcoExT Message Object',
+    fields: () => {
+        return {
+            title: {
+                type: GraphQLString,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.title;
+                }
+            },
+            status: {
+                type: GraphQLInt,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.status;
+                }
+            },
+            error: {
+                type: GraphQLString,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.error;
+                }
+            },
+            description: {
+                type: GraphQLString,
+                resolve(ecoextmessageobject) {
+                    return ecoextmessageobject.description;
+                }
+            },
+        };
+    }
+});
+
 const Query = new GraphQLObjectType({
     name: 'Query',
     description: 'This is a root query',
@@ -890,7 +923,131 @@ const Mutation = new GraphQLObjectType({
                         console.log(err);
                     });
                 }
-            }
+            },
+            addNotification: {
+                type: Notification,
+                args: {
+                    name: {
+                        type: GraphQLString,
+                    },
+                    type: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                    account_id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    var addNotification = `CALL CreateNotification("${args.name}", "${args.type}", "${args.description}", "${args.account_id}");`;
+            
+                    return Db.query(addNotification, null, {
+                        raw: true
+                    }).then((result) => {
+                        if(result[0].id){
+
+                            const notification_id = result[0].id;
+
+                            return Db.models.notification.findOne({
+                                where: {
+                                    notification_id: notification_id
+                                }
+                            });
+                        }
+                    }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            deleteNotification: {
+                type: EcoExtMessageObject,
+                args: {
+                    id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    return Db.models.notification.destroy({
+                        where: {
+                            notification_id: args.id,
+                        },
+                        limit: 1
+                    })
+                    .then((result) => {
+
+                        const message = {
+                            title: "Not deleted",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: result.toString() + " records deleted",
+                            description: "Record has not been removed",
+                        }
+
+                        if(result == 1){
+                            message.title = "Deleted  successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been remoed from database";
+                        }
+
+                        return message;
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            updateNotification: {
+                type: Notification,
+                args: {
+                    notification_id: {
+                        type: GraphQLInt,
+                    },
+                    name: {
+                        type: GraphQLString,
+                    },
+                    type: {
+                        type: GraphQLString,
+                    },
+                    description: {
+                        type: GraphQLString,
+                    },
+                },
+                resolve(source, args) {
+
+                    const values = {};
+
+                    if(args.name !== null && args.name !== "" && args.name !== undefined){
+                        values.name = args.name;
+                    }
+                    if(args.type !== null && args.type !== "" && args.type !== undefined){
+                        values.type = args.type;
+                    }
+                    if(args.description !== null && args.description !== "" && args.description !== undefined){
+                        values.description = args.description;
+                    }
+                    
+                    return Db.models.notification.update(
+                        values,
+                        {
+                            where:{
+                                notification_id: args.notification_id
+                            }
+                        }
+                    )
+
+                    .then((result) => {
+                        return Db.models.notification.findOne({
+                            where:{
+                                notification_id: args.notification_id
+                            }
+                        });
+                    }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
         };
     }
 });
