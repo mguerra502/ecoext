@@ -35,6 +35,12 @@ const Establishment = new GraphQLObjectType({
                     return establishment.name;
                 }
             },
+            image: {
+                type: GraphQLString,
+                resolve(establishment) {
+                    return establishment.image;
+                }
+            },
             address: {
                 type: GraphQLString,
                 resolve(establishment) {
@@ -799,7 +805,6 @@ const Mutation = new GraphQLObjectType({
                     })
                     
                     .catch((err) => {
-                        console.log("err");
                         console.log(err);
                     });
                 }
@@ -1044,6 +1049,156 @@ const Mutation = new GraphQLObjectType({
                             }
                         });
                     }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            addEstablishment: {
+                type: EcoExtMessageObject,
+                args: {
+                    name: {
+                        type: GraphQLString,
+                    },
+                    address: {
+                        type: GraphQLString,
+                    },
+                    image: {
+                        type: GraphQLString,
+                    },
+                    lat: {
+                        type: GraphQLFloat,
+                    },
+                    lon: {
+                        type: GraphQLFloat,
+                    },
+                },
+                resolve(source, args) {
+                    
+                    return Db.models.establishment.create(
+                        args                        
+                    )
+
+                    .then((result) => {
+                        
+
+                        const message = {
+                            title: "Not Created",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: "No records have been created",
+                            description: "[ENUM_ERROR_MESSAGE]",
+                        }
+
+                        if(result.null > 0){
+                            message.title = "Created successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been created";
+                        }
+
+                        return message;
+                    })
+
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            updateEstablishment: {
+                type: Establishment,
+                args: {
+                    establishment_id: {
+                        type: GraphQLInt,
+                    },
+                    name: {
+                        type: GraphQLString,
+                    },
+                    address: {
+                        type: GraphQLString,
+                    },
+                    image: {
+                        type: GraphQLString,
+                    },
+                    lat: {
+                        type: GraphQLFloat,
+                    },
+                    lon: {
+                        type: GraphQLFloat,
+                    },
+                },
+                resolve(source, args) {
+
+                    const values = {};
+
+                    if(args.name !== null && args.name !== "" && args.name !== undefined){
+                        values.name = args.name;
+                    }
+
+                    if(args.address !== null && args.address !== "" && args.address !== undefined){
+                        values.address = args.address;
+                    }
+                    if(args.image !== null && args.image !== "" && args.image !== undefined){
+                        values.image = args.image;
+                    }
+                    if(args.lat !== null && args.lat !== "" && args.lat !== undefined){
+                        values.lat = args.lat;
+                    }
+                    if(args.lon !== null && args.lon !== "" && args.lon !== undefined){
+                        values.lon = args.lon;
+                    }
+                    
+                    return Db.models.establishment.update(
+                        values,
+                        {
+                            where:{
+                                establishment_id: args.establishment_id
+                            }
+                        }
+                    )
+
+                    .then((result) => {
+                        return Db.models.establishment.findOne({
+                            where:{
+                                establishment_id: args.establishment_id
+                            }
+                        });
+                    }).catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            deleteEstablishment: {
+                type: EcoExtMessageObject,
+                args: {
+                    id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    return Db.models.establishment.destroy({
+                        where: {
+                            establishment_id: args.id,
+                        },
+                        limit: 1
+                    })
+                    .then((result) => {
+
+                        const message = {
+                            title: "Not deleted",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: result.toString() + " records deleted",
+                            description: "Record has not been removed",
+                        }
+
+                        if(result == 1){
+                            message.title = "Deleted  successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been remoed from database";
+                        }
+
+                        return message;
+                    })
+                    .catch(function(err) {
                         console.log(err);
                     });
                 }
