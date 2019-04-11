@@ -951,6 +951,7 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
+            // TODO add the notification to transaction if transaction_id is informed
             addNotification: {
                 type: Notification,
                 args: {
@@ -1332,6 +1333,50 @@ const Mutation = new GraphQLObjectType({
                         });
                     })
                     
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            },
+            deleteTransactionFromPurse: {
+                type: EcoExtMessageObject,
+                args: {
+                    purse_id: {
+                        type: GraphQLInt,
+                    },
+                    transaction_id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args) {
+                    return Db.models.purse_transactions.destroy({
+                        where: {
+                            purse_id: args.purse_id,
+                            transaction_id: args.transaction_id
+                        },
+                        limit: 1
+                    })
+                    // return Db.models.purse_transactions.findOne()
+                    .then((result) => {
+
+                        console.log(result)
+
+                        const message = {
+                            title: "Not deleted",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: result.toString() + " records deleted",
+                            description: "Record has not been removed",
+                        };
+
+                        if(result == 1){
+                            message.title = "Deleted  successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been remoed from database";
+                        }
+
+                        return message;
+                    })
                     .catch(function(err) {
                         console.log(err);
                     });
