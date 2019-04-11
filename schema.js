@@ -1382,6 +1382,44 @@ const Mutation = new GraphQLObjectType({
                     });
                 }
             },
+            "deleteManualTransaction" : {
+                type: EcoExtMessageObject,
+                args: {
+                    transaction_id: {
+                        type: GraphQLInt,
+                    },
+                },
+                resolve(source, args){
+                    return Db.models.transaction.destroy({
+                        where: {
+                            transaction_id: args.transaction_id,
+                            description: "User-Manual-Transaction"
+                        },
+                        limit: 1
+                    })
+                    .then((result) => {
+
+                        const message = {
+                            title: "Not deleted",
+                            status: isNaN(result.toString()) ? 500 : 200,
+                            error: result.toString() + " records deleted",
+                            description: "Record has not been removed",
+                        };
+
+                        if(result == 1){
+                            message.title = "Deleted  successfully";
+                            message.status = 200;
+                            message.error = "";
+                            message.description = "Record has been remoed from database";
+                        }
+
+                        return message;
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                    });
+                }
+            }
         };
     }
 });
