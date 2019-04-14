@@ -1,8 +1,5 @@
-// const graphql = require('graphql');
 const encrypter = require("./utils/encrypter");
 const decrypter = require("./utils/decrypter");
-// const addPurse = require("./db/mutations/mutation.purse");
-// const Purse = require("./db/models/Purse");
 
 const {
     GraphQLObjectType,
@@ -15,7 +12,9 @@ const {
     GraphQLInputObjectType,
 } = require('graphql');
 
-const Db = require('./db');
+const {
+    Db,
+} = require('./db');
 
 
 const Establishment = new GraphQLObjectType({
@@ -501,6 +500,77 @@ const Query = new GraphQLObjectType({
                     return Db.models.keys.findAll({
                         where: args
                     });
+                }
+            },
+            userTransactions: {
+                type: new GraphQLList(Transaction),
+                args: {
+                    user_id: {
+                        type: GraphQLString
+                    }
+                },
+                resolve(root, args) {
+                    const account_purses = [];
+                    const transaction_ids = [];
+
+                    return Db.models.user_login.findAll({
+                        include: [
+                            {
+                                model: Db.models.account
+                            }
+                        ]
+                    })
+                    .then(function (result) {
+                        if(result[0].dataValues){
+                            return result[0].dataValues.account_id;
+                        }
+                        throw new Error("No account found");
+                    })
+                    .then((account_id) => {
+                        return Db.models.account.findByPk(account_id,{
+                            include: [
+                                {
+                                    model: Db.models.purse
+                                }
+                            ]
+                        })
+                    })
+                    .then((account) => {
+                        account.dataValues.purses.forEach(element => {
+                            account_purses.push(element.purse_id)
+                        })
+                        
+                        return Db.models.purse.findAll({
+                            where: {
+                                purse_id: account_purses
+                            },
+                            include: [
+                                {
+                                    model: Db.models.transaction
+                                }
+                            ]
+                        });
+                    })
+                    .then((purses) => {
+                        purses.forEach(transactions => {
+                            transactions.transactions.forEach(transaction => {
+                                transaction_ids.push(transaction.dataValues.transaction_id)
+                            });
+                        });
+                        return Db.models.transaction.findAll({
+                            where: {
+                                transaction_id: transaction_ids
+                            },
+                            order: [
+                                ['updated_at', 'DESC'],
+                                // ['name', 'ASC'],
+                            ],
+                        })
+                    })
+                    .then((transactions) => {
+                        console.log(transactions)
+                        return transactions;
+                    })
                 }
             },
         };
