@@ -127,6 +127,29 @@ const Transaction = new GraphQLObjectType({
                     return transaction.transaction_id;
                 }
             },
+            purse_id: {
+                // type: GraphQLInt,
+                // resolve(transaction) {
+                //     if (transaction.null) {
+                //         return transaction.null;
+                //     }
+                //     return transaction.purse_id;
+                // }
+                type: GraphQLInt,
+                resolve(transaction) {
+                    if(transaction.purses){
+                        return transaction.purses[0].purse_id;
+                    }
+                    return null;
+                }
+            },
+            purses: {
+                type: GraphQLList(Purse),
+                resolve(transaction) {
+                    return transaction.purses;
+                }
+            },
+            
             date: {
                 type: GraphQLString,
                 resolve(transaction) {
@@ -168,7 +191,13 @@ const Transaction = new GraphQLObjectType({
                 resolve(transaction){
                     return transaction.token_id;
                 }
-            }
+            }, 
+            establishment: {
+                type: GraphQLList(Establishment),
+                resolve(transaction) {
+                    return transaction.getEstablishments();
+                }
+            },
         };
     }
 });
@@ -526,6 +555,7 @@ const Query = new GraphQLObjectType({
                         }
                         throw new Error("No account found");
                     })
+
                     .then((account_id) => {
                         return Db.models.account.findByPk(account_id,{
                             include: [
@@ -533,12 +563,12 @@ const Query = new GraphQLObjectType({
                                     model: Db.models.purse
                                 }
                             ]
-                        })
+                        });
                     })
                     .then((account) => {
                         account.dataValues.purses.forEach(element => {
-                            account_purses.push(element.purse_id)
-                        })
+                            account_purses.push(element.purse_id);
+                        });
                         
                         return Db.models.purse.findAll({
                             where: {
@@ -552,9 +582,9 @@ const Query = new GraphQLObjectType({
                         });
                     })
                     .then((purses) => {
-                        purses.forEach(transactions => {
-                            transactions.transactions.forEach(transaction => {
-                                transaction_ids.push(transaction.dataValues.transaction_id)
+                        purses.forEach(purses => {
+                            purses.transactions.forEach(transaction => {
+                                transaction_ids.push(transaction.dataValues.transaction_id);
                             });
                         });
                         return Db.models.transaction.findAll({
@@ -563,14 +593,17 @@ const Query = new GraphQLObjectType({
                             },
                             order: [
                                 ['updated_at', 'DESC'],
-                                // ['name', 'ASC'],
                             ],
+                            include: [
+                                {
+                                    model: Db.models.purse
+                                }
+                            ]
                         })
-                    })
-                    .then((transactions) => {
-                        console.log(transactions)
-                        return transactions;
-                    })
+                        // .then((transactions) => {
+                        //     console.log(transactions);
+                        // })
+                    });
                 }
             },
         };
@@ -835,6 +868,7 @@ const Mutation = new GraphQLObjectType({
                     },
                 },
                 resolve(source, args) {
+                    
                     let tr_id = 0;
                     return Db.models.transaction.create({
                         label: args.label,
@@ -869,9 +903,9 @@ const Mutation = new GraphQLObjectType({
                             },
                         })
                         
-                        .then((project) => {
-
-                            const payment_type_id_id = project.dataValues.payment_type_id;
+                        .then((payment) => {
+                            
+                            const payment_type_id_id = payment.dataValues.payment_type_id;
 
                             return Db.models.transaction_payment.create({
                                 paid: ammountPaid,
@@ -1321,7 +1355,7 @@ const Mutation = new GraphQLObjectType({
                                 transaction_id: args.transaction_id
                             }
                         });
-                    })
+                    });
                 }
             },
             deletePurse: {
@@ -1428,8 +1462,6 @@ const Mutation = new GraphQLObjectType({
                     })
                     // return Db.models.purse_transactions.findOne()
                     .then((result) => {
-
-                        console.log(result)
 
                         const message = {
                             title: "Not deleted",

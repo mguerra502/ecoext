@@ -6,7 +6,7 @@ services:
     env_file:
     - .env
     container_name: ex_node
-    restart: on-failure
+    restart: always
     ports:
       - 8888:3000
     volumes:
