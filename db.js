@@ -70,9 +70,6 @@ Transaction.belongsToMany(Establishment, { through: EstablishmentTransactions, f
 Establishment.belongsToMany(PhoneNumber, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'establishment_id' });
 PhoneNumber.belongsToMany(Establishment, {as: 'PhoneNumber', through: EstablishmentPhoneNumber, foreignKey: 'phone_number_id' });
 
-/** End Establishment **/
-
-
 // module.exports = Conn;
 module.exports = {
   Db: Conn,
