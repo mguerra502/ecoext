@@ -547,6 +547,7 @@ const Query = new GraphQLObjectType({
                     const transaction_ids = [];
 
                     return Db.models.user_login.findAll({
+                        where: args,
                         include: [
                             {
                                 model: Db.models.account
@@ -979,7 +980,7 @@ const Mutation = new GraphQLObjectType({
                     .then((purse_transactions) => {
                         // ipv4, port
                         
-                        if (ipv4 != "666.666.666.666") {
+                        if (ipv4 != "") {
                             scannedQR.confirmScan(port, ipv4);
                         }
                         
