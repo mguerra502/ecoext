@@ -1,5 +1,6 @@
 const encrypter = require("./utils/encrypter");
 const decrypter = require("./utils/decrypter");
+const scannedQR = require("./utils/ConfirmationMessage");
 
 const {
     GraphQLObjectType,
@@ -496,13 +497,16 @@ const Query = new GraphQLObjectType({
                         const keyaes = String(transaction.dataValues.key_aes);
 
                         const id = new decrypter(token, keyaes, keyiv).id;
+
+                        console.log("xxxxxxxxxxxxxxxxxx")
+                        console.log(id)
                         
                         return Db.models.transaction.findOne({
                             where: {
                                 transaction_id: id
                             }
                         });
-                    });
+                    })
                 }
             },
             notification: {
@@ -949,6 +953,8 @@ const Mutation = new GraphQLObjectType({
                 resolve(source, args) {
 
                     const token = args.transaction_token;
+                    let ipv4;
+                    let port;
 
                     return Db.models.keys.findOne({
                         where: {
@@ -959,6 +965,9 @@ const Mutation = new GraphQLObjectType({
                         const key_aes = foundToken.dataValues.key_aes;
                         const key_iv = foundToken.dataValues.key_iv;
 
+                        ipv4 = foundToken.dataValues.ipv4;
+                        port = foundToken.dataValues.port;
+
                         return new decrypter(token, key_aes, key_iv).id;
                     })
                     .then((transaction_id) => {
@@ -967,17 +976,32 @@ const Mutation = new GraphQLObjectType({
                             transaction_id: transaction_id
                         });
                     })
-                    
+                    .then((purse_transactions) => {
+                        // ipv4, port
+                        
+                        if (ipv4 != "666.666.666.666") {
+                            scannedQR.confirmScan(port, ipv4);
+                        }
+                        
+                        return purse_transactions;
+                    })
                     .then((purse_transaction) => {
-                        return Db.models.keys.destroy({
+                        Db.models.keys.destroy({
                             where: {
                                 id: token
-                            }
+                            },
+                            limit: 1
+                        })
+
+                        .then((deleted_key) => {
+                            if(deleted_key === 1){
+                                
+                            } 
                         });
+                        return purse_transaction;
                     })
-                    .then((deleted_key) => {
-                        console.log(deleted_key);
-                    });
+                    
+                    
                 }
             },
             addUser: {
