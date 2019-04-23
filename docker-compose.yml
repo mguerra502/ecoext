@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  ex_node:
+    image: ecoext/api:latest
+    env_file:
+    - .env
+    container_name: ex_node
+    restart: always
+    ports:
+      - 8888:3000
+    volumes:
+      - /app/node_modules
+      - ${ECOEXT_WEB_MAIN_VOLUME}:/app/
+    command:
+      nodemon -L index.js
+    networks:
+      - eco_net
+    depends_on: 
+      - ex_mysql
+
+  ex_mysql:
+    image: mysql
+    env_file:
+     - .env
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ${ECOEXT_MYSQL_DUMP}:/docker-entrypoint-initdb.d
+      - ${ECOEXT_MYSQL_DATA}:/var/lib/mysql
+    container_name: ex_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ECOEXT_DATABASE_ROOTPASSWORD}
+      MYSQL_DATABASE: ${ECOEXT_DATABASE}
+    ports: 
+      - 3305:3306
+    networks:
+      - eco_net
+
+  adminer:
+    container_name: ex_adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - eco_net
+    depends_on: 
+      - ex_mysql
+
+networks:
+  eco_net:
