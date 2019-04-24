@@ -33,6 +33,7 @@ const TransactionPayments           = Conn.import(__dirname + "/db/schema/Transa
 const TransactionNotifications      = Conn.import(__dirname + "/db/schema/TransactionNotifications");
 
 const Establishment                 = Conn.import(__dirname + "/db/schema/Establishment");
+const EstablishmentLogin            = Conn.import(__dirname + "/db/schema/EstablishmentLogin");
 const EstablishmentTransactions     = Conn.import(__dirname + "/db/schema/EstablishmentTransactions");
 const EstablishmentPhoneNumber      = Conn.import(__dirname + "/db/schema/EstablishmentPhoneNumber");
 

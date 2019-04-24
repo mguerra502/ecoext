@@ -11,11 +11,21 @@ const {
     GraphQLNonNull,
     GraphQLFloat,
     GraphQLInputObjectType,
+    GraphQLBoolean
 } = require('graphql');
 
 const {
     Db,
 } = require('./db');
+
+const establishment_login_arguments = {
+    username: {
+        type: GraphQLString
+    },
+    password: {
+        type: GraphQLString
+    },
+}
 
 
 const Establishment = new GraphQLObjectType({
@@ -605,10 +615,25 @@ const Query = new GraphQLObjectType({
                                 }
                             ]
                         })
-                        // .then((transactions) => {
-                        //     console.log(transactions);
-                        // })
                     });
+                }
+            },
+            establishmentLogin: {
+                type: GraphQLBoolean,
+                args: establishment_login_arguments,
+                resolve(root, args) {
+
+                    if(Object.keys(args).length !== Object.keys(establishment_login_arguments).length){
+                        return false;
+                    }
+
+                    return Db.models.establishment_login.findAll({
+                        where: args,
+                        limit: 1
+                    })
+                    .then((establishment_login) => {
+                        return establishment_login.length === 1;
+                    })
                 }
             },
         };
