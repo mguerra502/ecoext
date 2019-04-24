@@ -981,7 +981,26 @@ const Mutation = new GraphQLObjectType({
                         // ipv4, port
                         
                         if (ipv4 != "") {
-                            scannedQR.confirmScan(port, ipv4);
+                            try {
+                                scannedQR.confirmScan(port, ipv4);
+                            } catch (error) {
+                                /*
+                                const message = {
+                                    title: "Not deleted",
+                                    status: isNaN(result.toString()) ? 500 : 200,
+                                    error: result.toString() + " records deleted",
+                                    description: "Record has not been removed",
+                                };
+
+                                message.title = "Deleted  successfully";
+                                message.status = 200;
+                                message.error = "";
+                                message.description = "Record has been remoed from database";
+
+                                return message;
+                                */
+                               return null;
+                            }
                         }
                         
                         return purse_transactions;
